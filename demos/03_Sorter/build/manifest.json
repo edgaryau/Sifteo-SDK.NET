@@ -1,0 +1,16 @@
+{"app": {
+    "title": "03. Sorter",
+    "description": "This demo app presents a small game in which you sort your cubes into a row or column. If you sort them in order (left to right or bottom to top), The app gives you a confirmation. You can also tilt a cube to rotate the sprite.", 
+    "version": "1.0.0",
+    "runtime" : "executable",
+		"assembly":"04_Sorter.dll",
+    "arguments": ["-x", "-y"],
+    "appModule": "UNUSED",
+    "requiredSiftCount": 3,
+    "imagesPath": "assets/images",
+    "soundsPath": "assets/sounds",
+    "instructions": "assets/instructions",
+    "coverArt": "coverArt.png",
+    "internalArt": "internalArt.png"
+  }
+}

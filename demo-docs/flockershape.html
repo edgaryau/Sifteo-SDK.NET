@@ -1,0 +1,931 @@
+<!DOCTYPE html />
+
+<html>
+<head>
+	<title>FlockerShape.cs</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="nocco.css" rel="stylesheet" media="all" type="text/css" />
+	<script src="prettify.js" type="text/javascript"></script>
+</head>
+<body onload="prettyPrint()">
+	<div id="container">
+		<div id="background"></div>
+			<div id="jump_to">
+				Jump To &hellip;
+				<div id="jump_wrapper">
+					<div id="jump_page">
+							<a class="source" href="./index.html">
+								index.cs
+							</a>
+							<a class="source" href="./hellosifteoapp.html">
+								HelloSifteoApp.cs
+							</a>
+							<a class="source" href="./slideshowapp.html">
+								SlideShowApp.cs
+							</a>
+							<a class="source" href="./sorterapp.html">
+								SorterApp.cs
+							</a>
+							<a class="source" href="./flockerapp.html">
+								FlockerApp.cs
+							</a>
+							<a class="source" href="./flockerwrapper.html">
+								FlockerWrapper.cs
+							</a>
+							<a class="source" href="./flockershape.html">
+								FlockerShape.cs
+							</a>
+					</div>
+				</div>
+			</div>
+		<table cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th class="docs">
+						<h1>FlockerShape.cs</h1>
+					</th>
+					<th class="code"></th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr id="section_1">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_1">&#182;</a>
+							</div>
+							<p>This class is part of the Flocker demo app. See
+<a href="flockerapp.html">FlockerApp.cs</a>.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_2">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_2">&#182;</a>
+							</div>
+							<hr />
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+using System;
+using System.Collections.Generic;
+using Sifteo;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<p>The Sifteo.MathExt assembly contains utility functions that aren't provided
+in the standard libraries.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>using Sifteo.MathExt;
+
+
+namespace Flocker {
+
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_4">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_4">&#182;</a>
+							</div>
+							<p>The FlockerShape class represents a game object that can paint, move and scale.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>  internal class FlockerShape {
+
+    private Cube mCube;
+    private float mRadius;
+    private Float2 mPosition;
+    private Float2 mVelocity;
+    private Float2[] mVertices;
+    internal Float2 Position { get { return mPosition; } }
+    internal float Radius { get { return mRadius; } }
+
+    internal static readonly Float2 center = new Float2(Cube.SCREEN_WIDTH / 2f, Cube.SCREEN_HEIGHT / 2f);
+
+    internal FlockerShape(FlockerWrapper fw) {
+      mCube = fw.mCube;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_5">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_5">&#182;</a>
+							</div>
+							<p>Randomize the starting radius to an integer in [RadiusMinShape,
+RadiusMaxShape]. The radius integer is stored as a float, to
+interoperate more cleanly with floats used in the movement/scale
+simulation.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mRadius = FlockerWrapper.RadiusMinShape;
+      mRadius +=
+       (float)Mathf.DiceRoll((int)FlockerWrapper.RadiusMaxShape - (int)FlockerWrapper.RadiusMinShape + 1);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_6">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_6">&#182;</a>
+							</div>
+							<p>Pick a random starting position.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      float x = Mathf.RandomRange(mRadius, Cube.SCREEN_MAX_X - mRadius);
+      float y = Mathf.RandomRange(mRadius, Cube.SCREEN_MAX_Y - mRadius);
+      mPosition = new Float2(x, y);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_7">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_7">&#182;</a>
+							</div>
+							<p>Create two vertices (points that define a geometric shape) for the
+minimum and maximum points of the rectangle this FlockerShape paints.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mVertices = new Float2[2];
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_8">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_8">&#182;</a>
+							</div>
+							<p>Center the vertices on (0, 0), so we can just add the position to
+determine their current position on the cube's screen. Centering the
+vertices on (0, 0) also makes it easy to later make the shape appear
+smaller or larger, since we can just multiply by a number.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      const float MinRadius = FlockerWrapper.RadiusMinUnscaledShape;
+      const float MaxRadius = FlockerWrapper.RadiusMaxUnscaledShape;
+      switch (mVertices.Length) {
+        case 2:
+          mVertices[0].x = -Mathf.RandomRange(MinRadius, MaxRadius);
+          mVertices[0].y = -Mathf.RandomRange(MinRadius, MaxRadius);
+          mVertices[1].x = Mathf.RandomRange(MinRadius, MaxRadius);
+          mVertices[1].y = Mathf.RandomRange(MinRadius, MaxRadius);
+          break;
+      }
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_9">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_9">&#182;</a>
+							</div>
+							<p>Simulate this shape for the dt time passed.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    internal void Tick(float dt, List&lt;FlockerShape&gt; shapes) {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_10">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_10">&#182;</a>
+							</div>
+							<p>Resize by -1 or +1, randomly, to create a nice pulsing effect.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mRadius += (Mathf.DiceRoll(3) - 1) / 2f;
+      mRadius =
+        Mathf.Clamp(mRadius, FlockerWrapper.RadiusMinShape, FlockerWrapper.RadiusMaxShape);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_11">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_11">&#182;</a>
+							</div>
+							<p>Build an acceleration vector, used to update velocity of this shape.
+We'll add in an acceleration for one influence in each step below.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      Float2 a = new Float2();
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_12">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_12">&#182;</a>
+							</div>
+							<p>Add acceleration for "flocking". This will make the Shapes move like a
+flock of birds. More info: <a href="http://www.red3d.com/cwr/boids/">http://www.red3d.com/cwr/boids/</a></p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      int attractorCount = 0;
+      Float2 attractorPositions = new Float2();
+      Float2 attractorVelocities = new Float2();
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_13">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_13">&#182;</a>
+							</div>
+							<p>Iterate over all the local shapes and calculate this shape's behavior
+relative to them.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      foreach (FlockerShape s in shapes) {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_14">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_14">&#182;</a>
+							</div>
+							<p>Calculate the distance to the other shape.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        Float2 positionDelta = this.Position - s.Position;
+        float dist = positionDelta.Magnitude;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_15">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_15">&#182;</a>
+							</div>
+							<p>If the other shape is in range, it will attract this shape. To help
+implement this attraction, record each other attractor Shape's
+position, and later find the average.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        if (dist &gt; 0f &amp;&amp;
+            dist &lt;= FlockerWrapper.DistanceMaxFlockAttract) {
+          attractorPositions += s.Position;
+          attractorVelocities += s.mVelocity;
+          ++attractorCount;
+        }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_16">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_16">&#182;</a>
+							</div>
+							<p>If the other shape is too close, add an acceleration to this shape
+to move it away. Normalize the difference in position, then scale by
+the separation weight to create a separating acceleration, and add it
+to the acceleration vector.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        if (dist &gt; 0f &amp;&amp; dist &lt;= FlockerWrapper.DistanceMaxFlockSeparate) {
+          a += positionDelta * (FlockerWrapper.AccelSeparate / dist);
+        }
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_17">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_17">&#182;</a>
+							</div>
+							<p>Now, accelerate toward the average position of attracting shapes.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (attractorCount &gt; 0) {
+        attractorPositions /= attractorCount;
+        Float2 toAttractors = attractorPositions - this.Position;
+        float distToAttractors = toAttractors.Magnitude;
+        if (distToAttractors &gt; 0f) {
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_18">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_18">&#182;</a>
+							</div>
+							<p>Normalize direction to attractors, scale by attraction weight, and
+add to acceleration.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>          a += toAttractors * (FlockerWrapper.AccelCohere / distToAttractors);
+        }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_19">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_19">&#182;</a>
+							</div>
+							<p>Accelerate to align velocity with average velocity of attractors.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        a += attractorVelocities * (FlockerWrapper.AccelAlign / attractorCount);
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_20">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_20">&#182;</a>
+							</div>
+							<h3>Cube.Tilt</h3>
+
+<p>You can query the Tilt property of a cube at any time without using
+event handlers. The value is an array of three ints, representing the
+tilt on the X, Y, or Z axis. See
+<a href="slideshowapp.html">SlideShowApp</a> for details about
+interpreting tilt values.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_21">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_21">&#182;</a>
+							</div>
+							<p>Here we add acceleration in the direction of the current tilt.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      Float2 dirTilt = new Float2(mCube.Tilt[Cube.TILT_X] - 1, -(mCube.Tilt[Cube.TILT_Y] - 1));
+      if (!dirTilt.Equals(Float2.Zero)) {
+        a += dirTilt * FlockerWrapper.AccelTilt;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_22">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_22">&#182;</a>
+							</div>
+							<h3>Cube.ButtonIsPressed</h3>
+
+<p>You can query the ButtonIsPressed property of a cube at any time
+without using event handlers. ButtonIsPressed is true if the button is
+being held down.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_23">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_23">&#182;</a>
+							</div>
+							<p>Here we pull the shapes towards the center of the cube if the button
+is pressed.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (mCube.ButtonIsPressed) {
+        Float2 centerDelta = FlockerShape.center - this.Position;
+        float distanceToCenter = centerDelta.Magnitude;
+        if (distanceToCenter &gt; 0f) {
+          a += centerDelta * (FlockerWrapper.AccelCenter / distanceToCenter);
+        }
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_24">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_24">&#182;</a>
+							</div>
+							<h3>Cube.IsShaking</h3>
+
+<p>You can query the IsShaking property of a cube at any time without
+using event handlers.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_25">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_25">&#182;</a>
+							</div>
+							<p>Here we push the shapes out towards the edge of the cube if the cube
+is being shaken.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (mCube.IsShaking) {
+        Float2 centerDelta = this.Position - FlockerShape.center;
+        float distanceToCenter = centerDelta.Magnitude;
+        if (distanceToCenter &gt; 0f) {
+          a += centerDelta * (FlockerWrapper.AccelCenter / distanceToCenter);
+        }
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_26">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_26">&#182;</a>
+							</div>
+							<h3>Cube.IsUpright</h3>
+
+<p>The IsUpright property of a cube is true if the cube is face up; that
+is, if its tilt on the Z-axis is 2.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_27">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_27">&#182;</a>
+							</div>
+							<p>Here we cancel out all acceleration and velocity if the cube is face
+down, bringing the shape to a complete stop.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (!mCube.IsUpright) {
+        a = new Float2();
+        mVelocity = new Float2();
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_28">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_28">&#182;</a>
+							</div>
+							<p>Apply the acceleration to velocity. Limit the velocity to a fixed
+maximum, so that Shapes don't accelerate to undesirable speeds.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mVelocity += a * dt;
+      float speed = mVelocity.Magnitude;
+      if (speed &lt; -FlockerWrapper.VelocityMax || speed &gt; FlockerWrapper.VelocityMax) {
+        float clampedSpeed =
+          Mathf.Clamp(speed, -FlockerWrapper.VelocityMax, FlockerWrapper.VelocityMax);
+        mVelocity *= clampedSpeed / speed;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_29">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_29">&#182;</a>
+							</div>
+							<p>Apply velocity to position.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      Float2 newPosition = this.Position + mVelocity * dt;
+
+      if (!newPosition.Equals(this.Position)) {
+
+        List&lt;Cube.Side&gt; boundarySides =
+          FlockerWrapper.CalcBoundarySides(newPosition, mRadius);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_30">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_30">&#182;</a>
+							</div>
+							<p>Iterate over the cube's sides; check if a shape's new position would
+put it off the screen, and not onto a neighbor cube on that side.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        Float2 velocityMult = new Float2(1f, 1f);
+        foreach (Cube.Side side in boundarySides) {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_31">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_31">&#182;</a>
+							</div>
+							<h3>Cube.Neighbors</h3>
+
+<p>You can query the Neighbors property of a cube at any time.
+The Neighbors object can be accessed like an array, but it has a
+number of other properties and methods for working with a cube's
+neigbhors.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_32">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_32">&#182;</a>
+							</div>
+							<p>Here we check for a neighboring cube on each side. If there isn't
+a neighbor, we bounce the shape off the walls of the screen.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>          if (mCube.Neighbors[side] == null) {
+            if (side == Cube.Side.LEFT || side == Cube.Side.RIGHT) {
+              velocityMult.x = FlockerWrapper.AccelBounce;
+              newPosition.x = Mathf.Clamp(newPosition.x, mRadius, Cube.SCREEN_MAX_X - mRadius);
+            }
+            else {
+              velocityMult.y = FlockerWrapper.AccelBounce;
+              newPosition.y = Mathf.Clamp(newPosition.y, mRadius, Cube.SCREEN_MAX_Y - mRadius);
+            }
+          }
+        }
+
+        mPosition = newPosition;
+        mVelocity.x *= velocityMult.x;
+        mVelocity.y *= velocityMult.y;
+      }
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_33">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_33">&#182;</a>
+							</div>
+							<p>Paint this shape on its cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    internal void Paint(Cube c) {
+
+      if (FlockerWrapper.CalcBoundarySides(this.Position, mRadius).Count &gt; 0) {
+        return;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_34">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_34">&#182;</a>
+							</div>
+							<p>Vertices and position are stored as floating point values, to allow
+for fractional movement during simulation.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      Int2[] vertices = new Int2[mVertices.Length];
+      for (int i = 0; i &lt; vertices.Length; ++i) {
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_35">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_35">&#182;</a>
+							</div>
+							<p>Move the verts to be offset from mPosition, and scale by mRadius.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        vertices[i].x = (int)Mathf.Round(mVertices[i].x * mRadius + mPosition.x);
+        vertices[i].y = (int)Mathf.Round(mVertices[i].y * mRadius + mPosition.y);
+      }
+
+      switch (mVertices.Length) {
+        case 2:
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_36">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_36">&#182;</a>
+							</div>
+							<p>If there are two vertices, they are the minimum and maximum
+positions of a rectangle.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>          c.FillRect(
+            FlockerWrapper.ShapeColor,
+            vertices[0].x,
+            vertices[0].y,
+            vertices[1].x - vertices[0].x,
+            vertices[1].y - vertices[0].y);
+          break;
+      }
+    }
+
+    internal void TransferToCube(Cube c) {
+      if (mCube == c) {
+        return;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_37">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_37">&#182;</a>
+							</div>
+							<p>When transfering from a neighbor cube, transform the position and
+velocity appropriately.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (mCube != null) {
+        TransformToNeighborSpace(
+          ref mVelocity,
+          ref mPosition,
+          mCube.Neighbors.SideOf(c),
+          c.Neighbors.SideOf(mCube));
+      }
+
+      mCube = c;
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_38">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_38">&#182;</a>
+							</div>
+							<p>This method transfers a position and velocity from one cube's coordinate
+space to another's, based on the neighbored sides. It returns the
+transformed position and velocity as reference arguments.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    internal static void TransformToNeighborSpace(ref Float2 velocity,
+                                                  ref Float2 position,
+                                                  Cube.Side fromSide,
+                                                  Cube.Side toSide) {
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_39">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_39">&#182;</a>
+							</div>
+							<p>This function builds a transformation, step-by-step, from scratch.
+Alternatively, you can create a lookup table with all the possible
+transformations, but that technique can be error prone, especially if
+you decide to alter it later.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_40">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_40">&#182;</a>
+							</div>
+							<p>First, determine the angle, in radians, that the origin cube is
+rotated from the neighbor cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      int sideDelta = fromSide - toSide;
+      float radians;
+      if (Math.Abs(sideDelta) == 2) {
+        radians = 0f;
+      }
+      else if (sideDelta == 0) {
+        radians = Mathf.Pi;
+      }
+      else if (sideDelta == -1 || sideDelta == 3) {
+        radians = Mathf.Pi / 2f;
+      }
+      else {
+        radians = -Mathf.Pi / 2f;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_41">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_41">&#182;</a>
+							</div>
+							<p>Next, if the neighbor cube is rotated relative to the origin cube,
+rotate the input vectors about the center of the origin cube, so that
+they appear the same on the neighbor cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (radians != 0f) {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_42">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_42">&#182;</a>
+							</div>
+							<p>Temporarily make the positions relative to the center, so that we
+can rotate them about it.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        position -= FlockerShape.center;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_43">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_43">&#182;</a>
+							</div>
+							<p>Rotate about the center of the screen.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        Matrix rotation = Matrix.Rotation(radians);
+        position = rotation.TransformPoint(position);
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_44">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_44">&#182;</a>
+							</div>
+							<p>The velocity is just a direction, so it can be rotated without
+making it relative to the center.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        velocity = rotation.TransformDirection(velocity);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_45">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_45">&#182;</a>
+							</div>
+							<p>Now make the position relative to (0, 0) again.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        position += FlockerShape.center;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_46">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_46">&#182;</a>
+							</div>
+							<p>Next, move the rotated positions toward the side of the neighbor cube
+that touches the origin cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      Float2 deltaPosition = Float2.Side(toSide);
+      if (toSide == Cube.Side.LEFT || toSide == Cube.Side.RIGHT) {
+        deltaPosition *= Cube.SCREEN_WIDTH;
+      }
+      else {
+        deltaPosition *= Cube.SCREEN_HEIGHT;
+      }
+      position += deltaPosition;
+    }
+  }
+}
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_47">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_47">&#182;</a>
+							</div>
+							<hr />
+
+<p>FlockerShape.cs</p>
+
+<p>Copyright &copy; 2011 Sifteo Inc.</p>
+
+<p>This program is "Sample Code" as defined in the Sifteo
+Software Development Kit License Agreement. By adapting
+or linking to this program, you agree to the terms of the
+License Agreement.</p>
+
+<p>If this program was distributed without the full License
+Agreement, a copy can be obtained by contacting
+support@sifteo.com.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

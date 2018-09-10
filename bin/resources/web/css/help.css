@@ -1,0 +1,102 @@
+h2, h3, h4, p {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: Arial, Sans-Serif;
+	font-size: 15px;
+	padding-top:40px;
+}
+
+/******************************************************************************
+ * FAQ
+ *****************************************************************************/
+
+h2 {
+	font-size: 36px;
+	line-height: 100%;
+}
+
+ol {
+	margin: 30px 0;
+}
+
+p {
+	margin-bottom: 16px;
+}
+
+a {
+	text-decoration: none;
+	color: #0079BA;
+}
+
+	a:hover {
+		text-decoration: underline;
+	}
+	
+#faq {
+	min-width: 500px;
+	max-width: 700px;
+	line-height: 22px;
+}
+
+/******************************************************************************
+ * Sidebar
+ *****************************************************************************/
+
+#info {
+	float: right;
+	border: 1px solid #ddd;
+	padding: 15px;
+	width: 310px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+	background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#f0f0f0));
+	background-color: #f0f0f0;
+}
+
+h3 {
+	font-size: 1.5em;
+	margin-bottom: 10px;
+}
+
+a.big_button {
+	background: -webkit-gradient(linear, left top, left bottom, from(#ffa100), to(#ff6902));
+	background-color: #ffa100;
+	font-size: 26px;
+	color: #fff;
+	padding: 3px 8px 4px 8px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+a.big_button:hover {
+	text-decoration: none;
+	background: -webkit-gradient(linear, left top, left bottom, from(#ffc200), to(#ff6902));
+}
+
+nav {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:30px;
+    background: #ccc url(../images/top-shadow.png) repeat-x top left;
+	/*background: -webkit-gradient(linear, left top, left 25%, from(#aaa), to(#ccc));*/
+	border-bottom:1px solid #999;
+	padding:0 20px;
+}
+
+nav .close-button {
+    position:absolute;
+    right:80px;
+    font-size:13px;
+    font-weight:bold;
+    line-height:30px;
+    background:url();
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>Login</title>
+    <link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.8.9.custom.css" type="text/css" />
+	<link rel="stylesheet" href="css/sift.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="css/login.css" type="text/css" media="screen, projection" />
+
+</head>
+<body id="login">
+  
+  <div id="page">
+    <div class="component container">
+      <div></div>
+      <div class="content">
+        <form class="fancyBox shadow">
+          <img src="images/sifteo_logo.png"/>
+          <input type="hidden" name="_method" value="post"/>
+
+          <section>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="user_session[email]"/>
+          </section>
+        
+          <section>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="user_session[password]" />
+          </section>
+
+          <section>
+            <a id="login-button" class="small">Login</a>
+          </section>
+
+          <section id="authErrorMessage">
+            <div class="msg">
+            </div>
+          </section>
+
+          
+          <section class="help">
+            <ul>
+              <li>
+                <a href="/register" class="appServerLink">Create an account &rarr;</a>
+              </li>
+              <li>
+                <a href="/reset_password" class="appServerLink">Forgot your password? &rarr;</a>
+              </li>
+              <li>
+                <a href="#" id="show-tour">Getting Started Guide &rarr;</a>
+              </li>
+              <li>
+                <a href="/help" class="appServerLink">Help &rarr;</a>
+              </li>
+            </ul>
+          </section>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.8.9.custom.min.js"></script>
+  <script type="text/javascript" src="js/jquery.siftbutton.js"></script>
+  <script type="text/javascript" src="js/application.js"></script>
+
+  <script type="text/javascript" charset="utf-8">
+      $('#show-tour').click(function() {
+          mainWindow.showTour();
+          return false;
+      });
+  </script>
+
+  <!-- boilerplate -->
+  <script type="text/javascript" src="js/Sift.js"></script>
+  <script type="text/javascript" src="js/SystemConfig.js"></script>
+  <script type="text/javascript" src="js/Tracker.js"></script>
+  <script type="text/javascript" src="js/login.js"></script>
+</body>
+</html>

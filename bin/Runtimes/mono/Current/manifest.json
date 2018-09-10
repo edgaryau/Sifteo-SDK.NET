@@ -1,0 +1,7 @@
+{ "runtime": {
+    "name": "Mono",
+    "version": "0.9.0",
+    "executable": "mono-2.10.2/bin/mono.exe",
+    "arguments": ["$SR_MANIFEST_DIR/sifteo/Runner.exe"]
+  }
+}

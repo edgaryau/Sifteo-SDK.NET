@@ -1,0 +1,98 @@
+/* --- LOGIN PAGE --- */
+
+body#login {
+  background-color: #0099e9;
+  font-size: 16px;
+}
+
+#login .content {
+  padding-top: 100px;
+}
+
+#login .content form {
+  margin: 0 auto;
+  width: 350px;
+  padding: 40px;
+  padding-bottom: 30px;
+  border: 1px solid #2D7DAF;
+  background-color: white;
+}
+
+#login section {
+  margin-bottom: 12px;
+}
+
+#login img {
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 30px;
+}
+
+#login a {
+/*  color: white;*/
+  text-decoration: underline;
+}
+
+#login .sift-button {
+  margin-left: 100px;
+}
+
+#login section.help {
+  margin-top: 30px;
+  margin-left: 100px;
+}
+
+#login .help li, #login .help ul  {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#login .help li {
+  margin-bottom: 10px;
+}
+
+#login table {
+  width: 400px;
+  margin: 0 auto;
+}
+
+#login table td {
+  vertical-align: top;
+}
+
+#login label, #login .label {
+  display: block;
+  float: left;
+  width: 90px;
+  text-align: right;
+  padding-top: .2em;  
+  padding-right: 10px;
+}
+
+#login input[type=text],
+#login input[type=password] {
+  width: 10em;
+  margin: 0;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  padding: .4em .3em;
+}
+
+#login a.submit {
+  display: block;
+  float: left;
+  margin: 0 0 20px;
+}
+
+#authErrorMessage {
+  padding: 0;
+  margin-left: 100px;
+}
+
+#login #authErrorMessage .msg {
+  height: 40px; /* gross hack for smoother animation */
+  padding: 0;
+  margin: 0;
+  display: none;
+  color:#885555;
+}

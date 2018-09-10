@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="css/sift.css" type="text/css" media="screen" charset="utf-8">
+        <link rel="stylesheet" href="css/tour.css" type="text/css" media="screen" charset="utf-8">
+    </head>
+    <body>
+        
+        <article id="container">
+            <div id="pageSet">
+                
+            <section id="welcome-page" data-use-nav="false" class="page">
+                <header style="display:none">
+                    <h2>Welcome!</h2>
+                </header>
+                <div class="section-content">
+                    <div class="logo"></div>
+                    <div class="winni-big" style="display:none; top:-200px;"></div>
+                    <div class="winni-small" style="display:none; top:-200px;"></div>
+                    <div class="options">
+                        <a class="button next-button static-text">
+                            <span>Get started! &rarr;</span>
+                        </a>
+                        <a href="#" class="exit-link">Never mind, skip this&hellip;</a>
+                    </div>
+                    <label class="pref-checkbox show-tour-checkbox">
+                        <input type="checkbox" />Show This Guide on Startup
+                    </label>
+                </div>
+            </section>
+            
+            <section id="on-off-page" class="page">
+                <div class="section-content">
+                    <header>
+                        <h2>Getting to Know Your Cubes</h2>
+                    </header>
+                    <div class="content" style="width:100%">
+                        <div class="caption top"><p>Press to turn ON and OFF.</p></div>
+                        <div class="centered" style="width:400px; height:260px;">
+                            <div class="on-off-diagram">
+                                <div class="on-off-cube" style="margin:130px auto; position:relative;">
+                                    <canvas class="anim screen" width="120" height="80" style="top:20px; left:30px;"></canvas>
+                                    <div class="anim boink" style="top:-40px; display:none;"></div>
+                                </div>
+                                <div class="anim finger" style="top:0;left:175px"></div>
+                                <div class="anim clock-container" style="width:100px; height:45px; left:70px; top:40px;">
+                                    <canvas class="clock" height="43" width="45"></canvas>
+                                    <div class="clock-caption" style="display:none;font-size:11px;">2 seconds</div>
+                                </div>
+                            </div>
+                            <div class="charging-diagram">
+                                <div class="charging-container" style="width:186px; position:relative; left:180px;">
+                                    <div class="anim dock empty" style="top:80px;left:35px; display:none;"></div>
+                                    <div class="anim hand" style="left:85px; top:20px; display:none;"></div>
+                                </div>
+                                <div class="battery-cube-container" style="width:140px; margin:50px auto; position:relative;">
+                                    <div class="anim battery-cube" style="top:35px;"></div>
+                                    <div class="anim battery-states full" style="display:none; left:27px; top:63px;"></div>
+                                    <div class="anim battery-states-caption" style="top:5px; left:10px; display:none;">Fully charged!</div>
+                                    <div class="anim battery-states-caption-line" style="top:30px; left:30px;display:none;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+            <section id="link-page" class="page">
+                <div class="section-content">
+                    <header>
+                        <h2>All About Your Link</h2>
+                    </header>
+                    <div class="content">
+                        <div class="caption top"><p>Your link wirelessly connects your cubes to your computer.</p></div>
+                        <div class="centered" style="width:700px; height:300px;">
+                            <div class="anim plug-in-diagram" style="margin-top:50px; width:350px;">
+                                <div class="anim netbook" style="left:0px; top:0px"></div>
+                                <div class="anim hand with-dongle" style="left:190px; top:170px"></div>
+                                <div class="anim dongle"></div>
+                                <canvas class="dongle-waves" width="400" height="300"></canvas>
+                                <div class="anim usb-port-mask" style="left:174px;top:154px"></div>
+
+                                <div class="anim cube" style="display:none;"></div>
+                                <div class="anim cube" style="display:none;"></div>
+                                <div class="anim cube" style="display:none;"></div>
+                            </div>
+                            <div class="anim link-diagram" style="display:none;left:375px;width:350px;margin-top:50px;">
+                                <div class="anim link-cube" style="top:60px; left:100px"></div>
+                                <div class="anim link-states-caption" style="top:20px; left:130px; text-align:right;">Not Connected</div>
+                                <div class="anim link-states-caption-line" style="top:40px; left:200px;"></div>
+                                <div class="anim link-states-icons disconnected" style="top:88px; left:185px;"></div>
+                            </div>
+                            <div class="anim storage-diagram" style="display:none;">
+                                <img src="images/tour/dongle-storage.png" style="display:block; width:650px; margin:0 auto;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="account-page" class="page page-with-form" data-include-when-not-authenticated="true">
+            <!-- <section id="account-page" class="page page-with-form"> -->
+                <div class="section-content">
+                    <header>
+                        <h2>Log in</h2>
+                    </header>
+                    <div class="content">
+                        <div class="centered" style="padding-top:10px; width:700px; height:290px;">
+                            <div class="account-pane login">
+                                <div class="info_bubble">
+                                    <div class="content">
+                                        <form method="post" id="new-user-session" class="new-user-session" action="">
+                                            <label class="required">Email<span> *</span>
+                                                <input type="text" size="30" name="user-session[email]" id="user-session-email" class="text">
+                                            </label>
+                                            <label class="required">Password<span> *</span>
+                                                <input type="password" size="30" name="user-session[password]" id="user-session-password" class="text">
+                                                <em>Forgot your password? <a href="/reset_password"  class="appServerLink">Reset it</a></em>
+                                                <em>Don't have an account? <a href="/register"  class="appServerLink">Sign up</a></em>
+                                            </label>
+                                            <input type="hidden" value="0" name="user-session[remember_me]">
+                                            <button><span>Log In</span></button>
+                                        </form>
+                                        <div id="auth-error-message">
+                                            <div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="float:left; width:200px;margin-left:20px;">
+                                    <p>If you already created your account on Sifteo.com, you can log in here.</p>
+                                    <p>
+                                        Don't have a Sifteo account? <br/>
+                                        <strong><a href="/register" class="appServerLink">Sign up on Sifteo.com</a></strong>
+                                    </p>
+                                </div>
+                            </div>
+                            <div id="new-login-greeting">
+                                <h3>Hi, <span class="user-name">good to see you again</span>!</h3>
+                                <p>You've successfully logged in! <br/><a href="#" class="next-button static-text">Now keep on truckin' &rarr;</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+            
+<!--  this page is temporary: taken from previous tour implementation. to be replaced with mo' betta version (see below) -->
+            <section id="points-page" class="page">
+                <div class="section-content">
+                    <header>
+                        <h2>Download Some Games</h2>
+                    </header>
+                    <div class="content">
+                        <div class="caption top">
+                            <p><img style="position:absolute;left:63%;top:-30px;z-index:-101;" src="images/tour/points-coins.png">You already have points!</p>
+                        </div>
+                        <div class="centered" style="padding-top:10px; width:800px; ">
+                            <div>
+                                <img src="images/tour/store.png" style="float:left;clear:both;position:relative;left:-8px;z-index:-100;"/>
+                                <p style="position:relative;top:20px;left:-10px;">
+                                    You'll automatically get a few games with your account. When you're interested in trying more games, you can access the Sifteo Store by clicking on the "Sifteo Store" tab.
+                                </p>
+                            </div>
+                            <div style="clear:both; position:relative; top:-10px;">
+                                <img src="images/tour/points-points-display.png" style="float:right;position:relative;top:-50px;">
+                                <p style="position:relative;">
+                                    Some games are free, and others are paid for with points. You can see your points balance in the top right-hand corner of Siftrunner. If you use up all your points, you can buy more in the Sifteo store.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="ck-page" class="page">
+                <div class="section-content">
+                    <header>
+                        <h2>Make it Your Own</h2>
+                    </header>
+                    <div class="content">
+                        <div class="caption top"><p>Creativity Kit enables you to customize games with your own content!</p></div>
+                        <ol class="centered ck-list">
+                            <li>
+                                <img src="images/tour/ck/ck-cube.png">
+                                Pick a creativity kit game to customize.
+                            </li>
+                            <li>
+                                <img src="images/tour/ck/puzzle-editing.png" style="left:-6px;top:19px;">
+                                Enter in your own spelling lists, word and number puzzles, and more!
+                            </li>
+                            <li>
+                                <img src="images/tour/ck/cubes-playing.jpg"  style="left:0px;top:36px;">
+                                Play your new game on your cubes, and share it with friends!
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+<!-- temporarily removed as this stuff isn't done yet.
+
+            <section id="download-page" class="page">
+                <div class="section-content">
+                    <header>
+                        <h2>Download some games</h2>
+                    </header>
+                    <div class="caption top"><p></p></div>
+                    <div class="content">
+                        <div class="centered" style="padding-top:20px; width:700px; height:290px;">
+                            <div class="screencap-container" style="width:390px; float:left; border:1px solid #777; display:none;">
+                                <img />
+                            </div>
+                            <div class="label-container" style="float:left; width:290px;">
+                            <p class="label" style="float:left; margin:130px 0 0 20px;"></p>
+                            <p class="movie-controls" style="position:absolute; bottom:0; right:0; font-size:13px; display:none;">
+                                <a class="show-me-again" href="#" style="margin-right:5px;">Show Me Again.</a> | <a class="next-step" href="#" style="margin-left:5px;">OK. What's next?</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+-->
+
+            <section id="play-page" class="page" data-use-nav="false">
+                <div class="section-content">
+                    <header>
+                        <h2>What Are You Waiting For?</h2>
+                    </header>
+                    <div class="content">
+                        <div class="centered" style="padding-top:20px; width:700px; height:290px;">
+
+                            <div style="margin:-38px 0 0 0; width:335px; overflow:hidden; float:right;">
+                                <img src="images/tour/play.png"/>
+                            </div>
+                            <p>
+                                If you're new to Sifteo cubes, we recommend the <strong>"Get Started"</strong> game to familiarize yourself with what your cubes can do.
+                            </p>
+                            <p>
+                                You can access this tour again at any time from the help menu.
+                            </p>
+                            <div style="width:506px; margin:10px auto;overflow:hidden;clear:both;">
+                                <a href="#" class="prev-button static-text" style="display:block;margin:21px 20px 0 0;float:left;">&larr; Take Me Back.</a>
+                                <a class="button exit-link" style="font-size:30px; float:left; "><span>OK, Let's Go! &rarr;</span></a>
+                            </div>
+                            <label class="pref-checkbox show-tour-checkbox">
+                                <input type="checkbox" />Show This Guide on Startup
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            </div>
+        </article>
+        
+        <!-- TOUR NAVIGATION -->
+        <nav>
+            <a class="exit-link" href="#" style="float:right; margin-right:20px;">Exit</a>
+            <ul>
+                <li class="prev"><a class="button prev-button"><span>Back</span></a></li>
+                <li class="next"><a class="button next-button"><span>Next</span></a></li>
+                <li class="breadcrumbs">
+                    <ul id="breadcrumbs"></ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.4.4.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui-1.8.9.custom.min.js"></script>
+        <!--<script type="text/javascript" src="js/jquery.cycle.all.min.js"></script>-->
+        <script type="text/javascript" src="js/application.js"></script>
+        <script type="text/javascript" src="js/Sift.js"></script>
+        <script type="text/javascript" src="js/SystemConfig.js"></script>
+        <script type="text/javascript" src="js/Tracker.js"></script>
+        <script type="text/javascript" src="js/Bubble.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/tour.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/tour/welcome.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/tour/on-off-page.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/tour/link-page.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/tour/download-page.js"></script>
+    
+    </body>
+</html>

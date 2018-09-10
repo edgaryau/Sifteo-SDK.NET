@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/certificates">
+        <file>PCA-3G2.pem</file>
+        <file>valicert-1.pem</file>
+        <file>valicert-2.pem</file>
+        <file>valicert-3.pem</file>
+    </qresource>
+</RCC>

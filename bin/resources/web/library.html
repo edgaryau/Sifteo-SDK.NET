@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>Dashboard</title>
+
+  <!-- <script type="text/javascript" src="js/firebug-lite.js"></script> -->
+  <!-- <script type="text/javascript" src="js/firebug-lite.js#startOpened"></script> -->
+  
+  <!-- Framework CSS --> 
+    <!-- <link rel="stylesheet" href="css/base.css" type="text/css" media="screen, projection" />   -->
+    <link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.8.9.custom.css" type="text/css" />
+	<link rel="stylesheet" href="css/sift.css" type="text/css" media="screen, projection" />
+
+</head>
+
+<body>
+    <div id="pages">
+        <div class="pageBundle">
+            <div class="topshadow"></div>
+            <section class="library page">
+                <div class="alertMessage hidden">
+                    <div class="content empty">
+                        <h1>Maybe you'd like to <a href="/" class="storeLink">visit the store?</a></h1>
+                        <p>Looks like you haven't downloaded any apps yet. Take a look at the store to see what's available. You can also keep up with the latest Sifteo cubes apps on <a href="https://twitter.com/siftapps">Twitter</a> and <a href="http://www.facebook.com/pages/Sifteo/373697500639">Facebook</a>.</p>
+                        <p class="last"><a href="/" class="storeLink">&larr; To the store!</a></p>
+                    </div>
+                </div>
+                <div class="body">
+                    <!--<h1>What do you want to play today?</h1>-->
+                    <div class="apps">
+                    </div>
+                    <p>
+                        <a href="/buy_points" id="library-store-link" class="accountLink" style="display:none;">Get more points and games &rarr;</a>
+                    </p>
+                    
+                </div>
+            </section>
+            <section class="app page">
+                <!-- <div class="topshadow"></div> -->
+                <div class="body">
+                    <div class="sidebar">
+                        <div class="coverArt">
+                            <img src=""/>
+                            <div class="title" style="display:none"></div>
+                        </div>
+                        <div class="controlsContainer">
+                            <div class="controls">
+                                <div class="game">
+                                  <a href="#" class="playButton">
+                                    Play
+                                  </a>
+                                  <a href="#" class="pauseButton">
+                                    Pause
+                                  </a>
+                                  <a href="#" class="unpauseButton">
+                                    Play
+                                  </a>
+                                  <a href="#" class="stopButton">
+                                    Stop
+                                  </a>
+                                  <a href="#" class="uninstallButton small">
+                                      Uninstall
+                                  </a>
+                                  <br/>
+                                </div>
+                                <div class="install">
+                                  <a href="#" class="installerButton">
+                                    Install onto cubes
+                                  </a>
+                                  <a href="#" class="uninstallButton small">
+                                      Uninstall
+                                  </a>
+                                  <p class="percentInstalled"></p>
+                                </div>
+                                <div class="install-status">
+                                    <img src="images/loader.gif" class="loading"/>
+                                    <p></p>
+                                    <div class="install-controls">
+                                        <div class="progress">
+                                            <div class="progress-bar"></div>
+                                            <div class="progress-text"></div>
+                                        </div>
+                                        <a href="#" class="cancel-install small">
+                                            Cancel
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="create">
+                                    <h4></h4>
+                                    <a href="#" class="editButton small blue">
+                                        Edit This Game
+                                    </a>
+                                    <a href="#" class="revertButton small blue" style="display:none;">
+                                        Revert
+                                    </a>
+                                    <a href="#" class="cloneButton small blue">
+                                        Duplicate
+                                    </a>
+                                    <a href="#" class="deleteButton small blue">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="not-enough-sifts">
+                                <p>This game requires 3 cubes to play.</p>
+                            </div>
+                            <div id="more-sifts-would-be-better">
+                                <p>This game works best with 3 cubes.</p>
+                            </div>
+                            <div id="app-is-unplayable">
+                                <!-- this language is CK-specific which is ok at the moment, but this all needs work -->
+                                <p>You'll need to fix a problem with this Creation before you can play it.</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="content">
+                        <div class="breadcrumb">
+                            <a class="back" href="#">&larr; Return to my games</a>
+                        </div>
+                        
+                        <h1 class="title">App title</h1>
+
+                        <section class="description"></section>
+                        <section class="editor"></section>
+                        <section class="instructions"></section>
+                    </div>
+                
+                </div>
+            </section>
+        </div>
+    </div>
+    
+
+    <div id="cancel-install-dialog" class="hidden">
+        <h4>Installation Canceled</h4>
+        <p>
+            Installation has been canceled.
+        </p>
+    </div>
+    <div id="confirm-stop-app-dialog" class="hidden">
+        <h4></h4>
+        <p>
+            Are you sure you want to stop playing?
+        </p>
+    </div>
+    <div id="install-error-dialog" class="hidden">
+        <h4>Oops!</h4>
+        <p>
+            Something went wrong while trying to install <span class="app-name">the app</span>!
+            Please try again.
+        </p>
+    </div>
+    <div id="uninstall-error-dialog" class="hidden">
+        <h4>Could Not Uninstall</h4>
+        <p>
+            Something went wrong while trying to uninstall <span class="app-name">the app</span>!
+            Please try again.
+        </p>
+    </div>
+    <div id="sifts-missing-dialog" class="hidden dialog">
+        <div class="missing">
+            <h4>A Cube Has Gone Missing!</h4>
+            <p>
+                One or more of your cubes has disconnected. The game is currently paused. To resume, please make sure all of your cubes are nearby, powered, and connected. Tips for the care and feeding of your cubes can be found by <a href="#" class="show-tour">clicking here to show the Sifteo tour</a>.
+            </p>
+            <!--
+            <div class="slideshowContainer">
+              <div class="slideshow">
+                <img src="images/cnx_issues/cnx_range.png"/>
+                <img src="images/cnx_issues/cnx_los.png"/>
+                <img src="images/cnx_issues/cnx_hand.png"/>
+                <img src="images/cnx_issues/cnx_battery.png"/>
+              </div>
+              <div class="slideshowNav"></div>
+            </div>
+            -->
+            <p>
+                You can stop your game if your cubes can't make contact again.
+            </p>
+        </div>
+        <div class="reconnecting">
+            <h4>OK, Hold Tight</h4>
+            <p>
+                We are waiting for <span class="n-cubes">n</span> cubes to reconnect.
+            </p>
+            <p>
+                You can stop the game if your cubes can't make contact again.
+            </p>
+        </div>
+    </div>
+    <div id="link-disconnected-dialog" class="hidden dialog">
+        <h4>The Missing Link</h4>
+        <p>
+            Your link has been disconnected! The game is currently paused. Please make sure your link is inserted completely into the USB slot. Tips for the care and feeding of your link can be found by <a href="#" class="show-tour">clicking here to show the Sifteo tour</a>.
+        </p>
+        <p>
+            You can stop the game if your link can't reconnect.
+        </p>
+    </div>
+    <div id="battery-low-dialog" class="hidden">
+        <h4>Cube Low Battery Warning</h4>
+        <p>
+            One or more of your Sifteo cubes are low on battery. Please charge them as soon as possible.
+        </p>
+    </div>
+    <div id="app-startup-error" class="hidden">
+        <h4>Startup Error</h4>
+        <p>
+        </p>
+    </div>
+    <div id="not-enough-sifts-error" class="hidden">
+        <h4>You Don't Have Enough Cubes!</h4>
+        <p>
+        </p>
+    </div>
+    <div id="app-is-unresponsive-warning" class="hidden">
+        <h4>Uh-Oh.</h4>
+        <p>
+            Siftrunner hasn't heard from your game for a while. You may either quit and restart Siftrunner entirely, or opt to keep waiting.
+        </p>
+        <p>
+            This warning will go away on its own if the game seems to be ok again.
+        </p>
+    </div>
+    <div id="app-fatal-error" class="hidden">
+        <h4>Uh-Oh.</h4>
+        <p>
+            Looks like your game ran into a problem and had to quit. You can try to play it again.
+        </p>
+    </div>
+    <div id="app-edit-error" class="hidden">
+        <h4>Edit Error</h4>
+        <p>
+            Something
+        </p>
+    </div>
+
+
+  <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.8.9.custom.min.js"></script>
+  <script type="text/javascript" src="js/jquery.cycle.all.min.js"></script>
+  <script type="text/javascript" src="js/html-sanitizer-minified.js"></script>
+  <script type="text/javascript" src="js/application.js"></script>
+
+  <!-- boilerplate -->
+  <script type="text/javascript" src="js/Sift.js"></script>
+  <script type="text/javascript" src="js/SystemConfig.js"></script>
+  <script type="text/javascript" src="js/Tracker.js"></script>
+  <script type="text/javascript" src="js/Bubble.js"></script>
+  <script type="text/javascript" src="js/jquery.siftbutton.js"></script>
+
+  <!-- library-specific -->
+  <script type="text/javascript" src="js/library.js"></script>
+  <script type="text/javascript" src="js/siftApp.js"></script>
+  <script type="text/javascript" src="js/template.js"></script>
+
+  <script type="text/javascript" src="js/nicEdit.js"></script>
+
+  <script type="text/javascript" charset="utf-8">
+    (function($) {
+        $(document).ready(function() {
+            $('#library-store-link').siftButton();
+        });
+    })(jQuery);
+  </script>
+</body>

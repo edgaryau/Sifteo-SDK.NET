@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>Could Not Connect to Store</title>
+
+    <link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.8.9.custom.css" type="text/css" />
+	<link rel="stylesheet" href="css/sift.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="css/login.css" type="text/css" media="screen, projection" />
+
+</head>
+
+<body>
+	<div id="page">
+		<div id="main" class="component">
+			<div class="contentPanel">
+				<div class="container">
+					<div class="alertMessage">
+						<div class="content load-error">
+							<h1>Something went wrong!</h1>
+							<p>
+								Please <a href="#" class="reload">try again</a>. If you continue to receive this message, please visit <a href="/help" class="appServerLink">our help page</a>.
+							</p>
+							<p class="message" style="display:none;"></p>
+							<p class="last">
+								<a href="#" class="return-to-library">&larr; Return to My Games</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="js/Sift.js"></script>
+    <script type="text/javascript" src="js/SystemConfig.js"></script>
+    <script type="text/javascript" src="js/Tracker.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    
+	<script type="text/javascript" src="js/application.js"></script>
+	<script type="text/javascript">
+		
+		$('a.reload').click(function() {
+			mainWindow.showStore();
+			return false;
+		});
+		$('a.return-to-library').click(function() {
+			mainWindow.showLibrary();
+			return false;
+		});
+		$('.alertMessage').fadeIn();
+
+	</script>
+</body>
+</html>

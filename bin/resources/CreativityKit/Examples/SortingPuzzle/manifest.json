@@ -1,0 +1,11 @@
+{
+    "app": {
+        "creationType": "application/vnd.sifteo.sorting-creation",
+        "creationTemplate": "com.sifteo.CreativityKit.Templates.SortingPuzzle",
+        "title": "Sorting Puzzle",
+        "coverArt": "coverArt.png",
+        "internalArt": "internalArt.png",
+        "description": "Making puzzles like the ones you see in Word Play or Mount Brainiac is easy with the Creativity Kit: Sorting",
+        "writable": false
+    }
+}

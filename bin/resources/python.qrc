@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>runner.zip</file>
+        <file>sift.zip</file>
+    </qresource>
+</RCC>

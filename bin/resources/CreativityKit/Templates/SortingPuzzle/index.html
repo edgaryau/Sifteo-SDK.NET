@@ -1,0 +1,592 @@
+<div id="word-puzzle-editor">
+    <form class="ck-editor">
+        <h3 style="float:left">Number of Cubes</h3>
+        <section class="sift-count">
+            <select id="sift-count-input" style="margin:17px;">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </section>
+
+        <h3 style="clear:both;">Puzzles</h3>
+        <section class="puzzles">
+        </section>
+
+        <h3>Settings</h3>
+        <section class="options">
+            <label>
+                <span>Scored</span>
+                <input class="scored" name="scored" type="checkbox" />
+            </label>
+            <label>
+                <span>Time Limit</span>
+                <input class="timed" name="timed" type="checkbox" style="float:left;"/>
+            </label>
+            <input class="countdown-time" name="time" type="text" value="30" size="4" style="margin-left:10px"/>
+            <span style="color:#777">secs</span>
+            <label>
+                    <span>Shuffled</span>
+                    <input class="shuffled" name="shuffle" type="checkbox" />
+            </label>
+        </section>
+        
+        <!-- Ref: https://developer.mozilla.org/en/Using_files_from_web_applications -->
+        <!--
+        <p>Cover Art</p>
+        <input type="file" id="file-input" onchange="handleFiles(this.files)">
+        -->
+
+    </form>
+</div>
+    
+<script type="text/javascript" charset="utf-8">
+
+(function() {
+    var broadcaster = {};
+    var puzzleFocusIndex = -1;
+    var puzzleData = [];
+    function updateDeleteButtonEnabling() {
+        if ($('.editor .puzzle-container').length == 1) {
+            $('.editor .remove-button').addClass('disabled');
+        }
+        else {
+            $('.editor .remove-button').removeClass('disabled');
+        }
+    }
+    function setPuzzleTabIndices() {
+        var targets = [
+            'input[name=title]',
+            'input[name=description]',
+            'select#sift-count-input',
+            'input.puzzle',
+            'input[name=time]',
+            '.ck-instructions'
+        ];
+        var i = 100;
+        $(targets.join(', ')).each(function() {
+            $(this).attr('tabindex', i++);
+        });
+        $('.ck-instructions').unbind('focus').focus(function() {
+            $('.ck-instructions').click();
+        });
+        $('.app.page a').attr('tabindex', -1);
+    }
+    
+    // actually, the puzzle container, not the input.
+    function puzzleJQAt(index) {
+        var jq = $('.puzzle-container').eq(index);
+        return (jq.length ? jq : null);
+    }
+    
+    // actually, the puzzle container, not the input.
+    function puzzleJqFor(arg) {
+        if (typeof arg == 'number') {
+            arg = puzzleJQAt(arg);
+        }
+        else {
+            arg = $(arg);
+        }
+        return arg;
+    }
+    
+    function addPuzzleNotification(puzzle, message, key, type) {
+        type = type || 'error';
+        puzzle = puzzleJqFor(puzzle);
+        if (!puzzle.data('notifications')) {
+            //console.log('resetting notifications for puzzle ' + puzzle.parent().children().index(puzzle));
+            puzzle.data('notifications', {});
+        }
+        //console.log('adding notification [' + key + '] for puzzle ' + puzzle.parent().children().index(puzzle));
+        puzzle.data('notifications')[key] = { type: type, message: message };
+        updatePuzzleNotificationDisplay(puzzle);
+    }
+    
+    function clearPuzzleNotifications() {
+        $('.puzzle-container').each(function() {
+            $(this).data('notifications', {});
+        });
+    }
+    
+    function removePuzzleNotification(puzzle, key) {
+        puzzle = puzzleJqFor(puzzle);
+        if (puzzle.data('notifications') && (key in puzzle.data('notifications'))) {
+            //console.log('removing notification [' + key + '] for puzzle ' + puzzle.parent().children().index(puzzle));
+            delete puzzle.data('notifications')[key];
+        }
+        updatePuzzleNotificationDisplay(puzzle);
+    }
+    
+    function buildPuzzleNotifications(validationResults) {
+        //console.log('validationResults has ' + validationResults.warnings.length + ' warnings and ' + validationResults.errors.length + ' errors');
+        for(var i = 0; i < validationResults.warnings.length; i++) {
+            var warning = validationResults.warnings[i];
+            if (warning.selector.indexOf('.puzzle-container') == 0 && ('data' in warning)) {
+                addPuzzleNotification(warning.data, warning.message, warning.key, 'warning');
+            }
+        }
+        for(var i = 0; i < validationResults.errors.length; i++) {
+            var error = validationResults.errors[i];
+            if (error.selector.indexOf('.puzzle-container') == 0 && ('data' in error)) {
+                addPuzzleNotification(error.data, error.message, error.key, 'error');
+            }
+        }
+        var puzzles = $('.puzzle-container');
+        for (var i = 0; i < puzzles.length; i++) {
+            updatePuzzleNotificationDisplay(i);
+        }
+    }
+    
+    function updatePuzzleNotificationDisplay(puzzle) {
+        puzzle = puzzleJqFor(puzzle);
+        var notifications = puzzle.data('notifications');
+        var stack = [];
+        for (var id in notifications) {
+            stack.push(notifications[id]);
+        }
+        //console.log(stack.length + ' notifications for puzzle ' + puzzle.parent().children().index(puzzle));
+        stack.sort(function(a, b) {
+            var result = (a.type == 'error' && b.type == 'warning' ? -2 : 0);
+            var aMessage = a.message.toLowerCase();
+            var bMessage = b.message.toLowerCase();
+            return (aMessage > bMessage ? result + 1 : (aMessage == bMessage ? result : result - 1));
+        });
+        if (stack.length) {
+            var notification = stack[0];
+            var jq = puzzle.find('.notification');
+            if (jq.length == 0) {
+                jq = $('<span class="notification"></span>');
+                puzzle.append(jq);
+            }
+            jq.html(notification.message);
+            jq.removeClass('warning error').addClass(notification.type);
+        }
+        else {
+            puzzle.find('.notification').fadeOut(function() { $(this).remove(); });
+        }
+    }
+        
+    function buildPuzzleItem(puzzle) {
+        puzzle = puzzle || [];
+        
+        var puzzleSiftCount = $('#sift-count-input').val();
+        var filledPuzzles = 0;
+        
+        var el = $('<div class="puzzle-container"></div>')
+
+        if (puzzle.length > 0) {
+            for (var i = 0; i < puzzle.length; i++) {
+                if (i > puzzleSiftCount - 1) {
+                    break;
+                }
+                var input = $('<input type="text" class="puzzle" />');
+                input.val(puzzle[i]);
+                el.append(input);
+                filledPuzzles++;
+            }
+        }
+        if (filledPuzzles < puzzleSiftCount) {
+            for (var i = filledPuzzles; i < puzzleSiftCount; i++) {
+                var input = $('<input type="text" class="puzzle" />');
+                el.append(input);
+            }
+        }
+        
+        el.append('<a href="#" class="add-button">Add</a>')
+        el.append('<a href="#" class="remove-button">Remove</a>');
+
+
+        el.find('a.add-button').click(function() {
+            var item = buildPuzzleItem();
+            el.after(item);
+            $(broadcaster).trigger('data-changed');
+            updateDeleteButtonEnabling();
+            return false;
+        });
+        el.find('a.remove-button').click(function() {
+            if (!$(this).hasClass('disabled')) {
+                el.remove();
+            }
+            $(broadcaster).trigger('data-changed');
+            updateDeleteButtonEnabling();
+            return false;
+        });
+        el.find('input').change(function() {
+            // the timer is so we can catch the next focused input, if any.
+            setTimeout(function() {
+                var puzzles = $('#word-puzzle-editor input.puzzle');
+                puzzleFocusIndex = $('#word-puzzle-editor input.puzzle').index($('#word-puzzle-editor input.puzzle:focus'));
+                $(broadcaster).trigger('data-changed');
+            }, 1);
+            return true;
+        });
+        return el;
+    }
+
+    function collectData() {
+        var o = {};
+        if ($('input[name=title]').length) {
+            o.title = $('input[name=title]').val();
+        }
+        else {
+            o.title = $('h1.title').html();
+        }
+        if (o.title.length == 0) {
+            o.title = 'Untitled';
+        }
+        
+        if ($('input[name=description]').length) {
+            o.description = $('input[name=description]').val();
+        }
+        else {
+            o.description = $('section.description').html();
+        }
+        
+        o.instructions = $('#ck-instructions-container').html();
+        o.scored = $('#word-puzzle-editor input[name=scored]').attr('checked');
+        if ($('#word-puzzle-editor input[name=timed]').attr('checked')) {
+            if ($('#word-puzzle-editor input[name=time]').val() == 'none') {
+                o.time = 30;
+            }
+            else {
+                o.time = parseInt($('#word-puzzle-editor input[name=time]').val(), 10);
+            }
+        }
+        else {
+            o.time = 0;
+        }
+        o.shuffle = $('#word-puzzle-editor input[name=shuffle]').attr('checked');
+
+        o.puzzles = [];
+        $("#word-puzzle-editor .puzzle-container").each(function(index) {
+            var puzzle = [];
+            $(this).find('.puzzle').each(function() {
+                puzzle.push($(this).val().trim());
+            });
+            o.puzzles.push(puzzle);
+        });
+        o.requiredSiftCount = o.optimalSiftCount = parseInt($('#sift-count-input').val(), 10);
+        
+        return o;
+    }
+
+    $('#word-puzzle-editor form').submit(function() { return false; });
+
+    $('#word-puzzle-editor input, select#sift-count-input').not('.puzzle').change(function() {
+        $(broadcaster).trigger('data-changed');
+        return true;
+    });
+    
+    var templateMethods = {
+        save: function() {
+            var data = collectData();
+            siftEditor.writeData(JSON.stringify(data));
+        },
+        load: function(data) {
+            data = JSON.parse(data);
+
+            if ('requiredSiftCount' in data) {
+                $('#sift-count-input').val(data.requiredSiftCount);
+            }
+            else {
+                var longestPuzzleLength = 2;
+                data.puzzles.forEach(function(puzzle) {
+                    if (puzzle.length > longestPuzzleLength) {
+                        longestPuzzleLength = puzzle.length;
+                    }
+                });
+                longestPuzzleLength = Math.min(longestPuzzleLength, 6);
+
+                $('#sift-count-input').val(longestPuzzleLength);
+            }
+            
+            $('#word-puzzle-editor .puzzles').empty();
+            data.puzzles.forEach(function(puzzle) {
+                var el = buildPuzzleItem(puzzle);
+                $('#word-puzzle-editor .puzzles').append(el);
+            });
+
+            $('#word-puzzle-editor input[name=scored]').attr('checked', data.scored);
+            $('#word-puzzle-editor input[name=timed]').attr('checked', (data.time > 0));
+            $('#word-puzzle-editor input[name=shuffle]').attr('checked', data.shuffle);
+            if (data.time <= 0) {
+                $('#word-puzzle-editor input[name=time]').attr('disabled', 'disabled').val('none');
+            }
+            else {
+                $('#word-puzzle-editor input[name=time]').removeAttr('disabled').val(data.time);
+            }
+
+            $('h1.title').html(data.title);
+            $('input[name=title]').val(data.title);
+            $('section.description').html(data.description);
+            $('input[name=description]').val(data.description);
+
+            $('#ck-instructions-container').html(data.instructions);
+            updateDeleteButtonEnabling();
+            if (puzzleFocusIndex >= 0) {
+                $('#word-puzzle-editor input.puzzle').eq(puzzleFocusIndex).focus();
+                puzzleFocusIndex = -1;
+            }
+            
+            $('#sift-count-input').val()
+            
+            var validationResults = {};
+            templateMethods.validate(validationResults);
+            buildPuzzleNotifications(validationResults);
+            setPuzzleTabIndices();
+        },
+        validate: function(results) {
+            var data = collectData();
+            
+            results.errors = [];
+            results.warnings = [];
+            
+            // 21-126, 215, 247
+            var findInvalidCharacters = function(string) {
+                var invalids = [];
+                for (var m = 0; m < string.length; m++) {
+                    var code = string.charCodeAt(m);
+                    var singleAllowables = [215, 247];
+                    // currently, double quotes are not allowed (code 34)
+                    if ((code < 21 || code > 126 || code == 34) && (singleAllowables.indexOf(code) == -1)) {
+                        if (invalids.indexOf(String.fromCharCode(code)) == -1) {
+                            invalids.push(String.fromCharCode(code));
+                        }
+                    }
+                }
+                return invalids;
+            };
+            
+            var flagInvalidCharacters = function(string, selector, fieldName) {
+                var invalids = findInvalidCharacters(string);
+                invalids.forEach(function(character) {
+                    var e = {
+                        selector: selector,
+                        message: fieldName + ' cannot contain the character "' + character + '"'
+                    };
+                    if (character == '"') {
+                        e.message = fieldName + ' cannot contain double quotes.';
+                    }
+                    results.errors.push(e);
+                });
+            };
+            
+            // time
+            if (isNaN(data.time)) {
+                results.errors.push({
+                   selector: '#timed',
+                   message: 'Time must be a number.'
+                });
+            }
+            if (data.time < 0) {
+                results.errors.push({
+                    selector: '#timed',
+                    message: 'Time can\'t be a negative number!'
+                });
+            }
+            
+            // title
+            var maxTitleLength = 26;
+            if (data.title.length > maxTitleLength) {
+                results.errors.push({
+                    selector: '.title',
+                    message: 'Title must be ' + maxTitleLength + ' or fewer characters.'
+                });
+            }
+            flagInvalidCharacters(data.title, '.title', 'The title');
+            
+            // description
+            var maxDescriptionLength = 77;
+            if (data.description.length > maxDescriptionLength) {
+                results.errors.push({
+                    selector: '.description',
+                    message: 'On-screen instructions must be ' + maxDescriptionLength + ' or fewer characters.'
+                });
+            }
+            flagInvalidCharacters(data.description, '.description', 'On-screen instructions');
+            
+            // puzzles
+            var maxPuzzleLength = 71;
+            var maxWordLength = 11;
+            for (var i = 0; i < data.puzzles.length; i++) {
+                var puzzle = data.puzzles[i];
+                var trimmedPuzzle = [];
+                puzzle.forEach(function(item) {
+                    if (item.trim().length) {
+                        trimmedPuzzle.push(item.trim());
+                    }
+                });
+                var totalLength = 0;
+                puzzle.forEach(function(item) {
+                    totalLength += item.length;
+                });
+                if (totalLength > maxPuzzleLength) {
+                    results.errors.push({
+                        selector: '.puzzle-container:eq(' + i + ')',
+                        message: 'Each puzzle must be ' + maxPuzzleLength + ' or fewer characters total!',
+                        data: i
+                    });
+                }
+                if (puzzle.length > 6) {
+                    results.errors.push({
+                        selector: '.puzzle-container:eq(' + i + ')',
+                        message: 'You can\'t have more than 6 items in a puzzle!',
+                        data: i
+                    });
+                }
+
+// commenting out: currently, the # of cubes input exclusively 
+// controls the requiredSiftCount of the apps.
+/*
+                if (trimmedPuzzle.length > controlDeck.getNSifts()) {
+                    results.warnings.push({
+                        selector: '.puzzle-container:eq(' + i + ')',
+                        key: 'required-sift-count',
+                        message: 'This puzzle will need ' + trimmedPuzzle.length + ' cubes.',
+                        data: i
+                    });
+                }
+*/
+                if (trimmedPuzzle.length == 0) {
+                    results.warnings.push({
+                        selector: '.puzzle-container:eq(' + i + ')',
+                        key: 'no-items',
+                        message: 'This puzzle has no items and will be skipped!',
+                        data: i
+                    });
+                }
+                if (trimmedPuzzle.length == 1) {
+                    results.warnings.push({
+                        selector: '.puzzle-container:eq(' + i + ')',
+                        key: 'one-item',
+                        message: 'This puzzle has only one item and will be skipped!',
+                        data: i
+                    });
+                }
+
+                for (var n = 0; n < puzzle.length; n++) {
+                    if (puzzle[n].length > maxWordLength) {
+                        results.errors.push({
+                            selector: '.puzzle-container:eq(' + i + ')',
+                            key: 'word-too-long',
+                            message: '"' + puzzle[n] + '" is too long. Please limit puzzle items to ' + maxWordLength + ' characters.',
+                            data: i
+                        });
+                    }
+
+                    var invalids = findInvalidCharacters(puzzle[n]);
+                    invalids.forEach(function(character) {
+                        var error = {
+                            key: 'puzzle',
+                            selector: '.puzzle-container:eq(' + i + ')',
+                            message: '',
+                            data: i
+                        };
+                        if (character == '"') {
+                            error.message = "Double quotes are not allowed in puzzles!";
+                        }
+                        else {
+                            error.message = '"' + character + '" is not an allowable character in a puzzle!';
+                        }
+                        results.errors.push(error);
+                    });
+                }
+            }
+            return results.errors.length == 0 && results.warnings.length == 0;
+        },
+        getFormData: function() {
+            return collectData();
+        },
+        getEventBroadcaster: function() {
+            return broadcaster;
+        },
+        getRequiredSiftCount: function() {
+            return collectData().requiredSiftCount;
+        },
+        getOptimalSiftCount: function() {
+            return collectData().optimalSiftCount;
+        }
+    };
+    
+    $(broadcaster).bind('check-sift-count', function() {
+        clearPuzzleNotifications(); // clear because our puzzles aren't automatically rebuilt when the # of sifts changes externally
+        var validationResults = {};
+        templateMethods.validate(validationResults);
+        buildPuzzleNotifications(validationResults);
+    });
+
+    var currentApp = Sift.App.currentOpenApp();
+    if (currentApp) {
+        currentApp.setTemplateMethods(templateMethods);
+    }
+})();
+/*
+  function loadThePuzzle(data) {
+    data = JSON.parse(data);
+
+    data.puzzles.forEach(function(puzzle) {
+      siftDebug.log('PUZZLE: ' + puzzle);
+
+      var el = buildPuzzleItem(puzzle);
+      $("#word-puzzle-editor form #puzzles").append(el);
+    });
+  }
+*/
+/*
+  function handleFiles(files) {
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        siftDebug.log('  name: ' + file.name);
+        siftDebug.log('  size: ' + file.size);
+        siftDebug.log('  type: ' + file.type);
+        // @note: FileReader is not available in QtWebKit.  This won't work.
+
+        var reader = new FileReader();
+        siftDebug.log('  reader: ' + reader);
+        reader.onload = function(e) {
+          siftDebug('READER READ STUFF' + e.target.result);
+        };
+
+        reader.readAsDataURL(file);
+      }
+  }
+  */
+
+
+
+/*
+  $(document).ready(function() {
+    //Object.keys(window).forEach(function(key) {
+    //  siftDebug.log('window property: ' + key); 
+    //});
+      
+    // @todo: display the form only after we have data to populate it with
+    var data = siftEditor.readData();
+    //data = JSON.parse(data);
+    siftDebug.log('READ DATA: ' + data);
+    loadThePuzzle(data);
+
+    $("#word-puzzle-editor form").submit(function() {
+      console.log("Building puzzle...");
+      siftDebug.log("Building puzzle...");
+
+      var o = {};
+      o.title = "Word Puzzle";
+      o.instructions = "Create a row to solve each puzzle";
+      o.mode = "elapsed";
+      o.time = 40;
+      o.shuffle = false;
+     
+      o.puzzles = [];
+      $("#word-puzzle-editor form input.puzzle").each(function(index) {
+        o.puzzles.push($(this).val());
+      });
+
+      siftEditor.writeData(JSON.stringify(o));
+      return false;
+    });
+  });
+*/
+</script>

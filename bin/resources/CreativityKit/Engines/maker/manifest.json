@@ -1,0 +1,16 @@
+{"app": {
+    "title": "Creativity Kit: Sorting",
+    "description": "Create sorting puzzles and games the easy way with this handy tool.",
+    "version": "1.0.0",	
+    "appModule": "maker",
+    "appClass": "MakerApp",
+    "requiredSiftCount" : 3,	
+    "coverArt": "coverArt.png",
+    "internalArt": "internalArt.png",
+    "imagesPath": "assets/images",
+    "soundsPath": "assets/sounds",
+    "instructions": "assets/instructions",
+    "handlesType": "application/vnd.sifteo.sorting-creation",
+    "devAppID": "1000043"
+  }
+}

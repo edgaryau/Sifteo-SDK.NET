@@ -1,0 +1,16 @@
+{
+    "versions" : [
+        {
+            "version" : "1.0.0",
+            "firmwarePath" : "blr_fep_1_0_0.sift"
+        },
+        {
+            "version" : "1.1.0",
+            "firmwarePath" : "blr_fep_1_1_0.sift"
+        },
+        {
+            "version" : "1.1.4",
+            "firmwarePath" : "blr_fep_1_1_4.sift"
+        }
+    ]
+}

@@ -1,0 +1,245 @@
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="css/sift.css" type="text/css">
+    <style type="text/css" media="screen">
+        
+        body {
+            color: white;
+            font-size: 14px;
+            background: rgb(0,125,201) url(images/tabs/tabs_background.png) repeat-x top left;
+        }
+
+        a, a:visited {
+            color: white;
+            text-decoration: none;
+        }
+
+        .tabs {
+            position:absolute;
+            bottom:0;
+        }
+        .tabs a {
+            margin-right: 10px;
+            display: block;
+            height: 50px;
+            background:url(images/tabs.png) no-repeat top left;
+            text-indent: -10000px;
+            float: left;
+        }
+        
+        .tabs.left {
+            left:30px;
+        }
+        .tabs.right {
+            right:10px;
+        }
+        
+        .tabs a#library {
+            width: 164px;
+        }
+        .tabs a#library:hover {
+            background-position:0 -56px;
+        }
+        .tabs a#library.selected {
+            background-position:0 -110px;
+        }
+        .tabs a#store {
+            width: 172px;
+            background-position: -172px 0;
+        }
+        .tabs a#store:hover {
+            background-position: -172px -56px;
+        }
+        .tabs a#store.selected {
+            background-position: -172px -110px;
+        }
+        .tabs a#account {
+            width: 56px;
+            background-position: -352px 0;
+        }
+        .tabs a#account:hover {
+            background-position: -352px -56px;
+        }
+        .tabs a#account.selected {
+            background-position: -352px -110px;
+        }
+        .tabs a#help {
+            width: 56px;
+            background-position: -414px 0;
+        }
+        .tabs a#help:hover {
+            background-position: -414px -56px;
+        }
+        .tabs a#help.selected {
+            background-position: -414px -110px;
+        }
+        
+        a.disabled {
+            opacity:.4;
+            cursor:normal;
+        }
+        
+        #account-details a.disabled {
+            text-decoration:none;
+        }
+        
+        #account-details {
+            position: absolute;
+            right: 10px;
+            top: 3px;
+            font-size:12px;
+        }
+        
+        #account-details a {
+            margin: 0 .3em;
+        }
+        #account-details a:hover {
+            text-decoration: underline;
+        }
+        
+        #account-details a.highlight {
+            background-color: white;
+            color: rgb(0,125,201) ;
+        }
+        
+        #disabled-veil {
+            width:100%;
+            height:74px;
+            position:absolute;
+            left:210px;
+            top:0;
+            background:transparent;
+            display:none;
+        }
+        
+    </style>
+</head>
+<body style="display:none;">
+    
+    <div class="tabs left">
+        <a id="library" href="#library" class="selected">My Games</a>
+        <a id="store" href="#store">Sifteo Store</a>
+    </div>
+    <div class="tabs right">
+        <a id="account" href="#account">My Account</a>
+        <a id="help" href="#help">Help</a>
+    </div>
+    <div id="account-details">
+        Signed in as 
+        <a href="#" id="name"></a> |
+        <a href="#" id="points"><span></span> points</a>
+    </div>
+    <div id="disabled-veil"></div>
+    <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="js/application.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        $(function() {
+
+            var updatePointsBalance = function(newBalance) {
+                var pointsTextElement = $("#points span");
+                //console.log(pointsTextElement.text());
+                if(pointsTextElement.text() != newBalance.toString() && pointsTextElement.text() != "") {
+                    $("#points span").text(newBalance)
+                    $("#points").addClass("highlight");
+                    setTimeout(function() {
+                        $("#points").removeClass("highlight")
+                    }, 750);
+                }
+            }
+
+
+            var tabs = $(".tabs a");
+            tabs.click(function() {
+                mainWindow.onTabClicked($(this).attr("id"));
+                return false;
+            });
+            
+            // @todo: remove this once included in tabs
+            $("#creations").click(function() {
+                mainWindow.onTabClicked("creations");
+                return false;
+            });
+            
+            $('#help').click(function() {
+                mainWindow.showHelp();
+            });
+            
+            // Setup session links: name/email, points, help
+            var setupLinks = function(user) {
+                if (user) {
+                    // note on click handlers below: passing 'showAccount' as bare callback 
+                    // passes event object as first argument, which is interpreted as a string,
+                    // appending "[object Object]" to the path ... which is bad.
+                    $('#name')
+                        .click(function() { mainWindow.showAccount(); })
+                        .text(user.getEmailAddress());
+                    $("#points")
+                        .click(function() { mainWindow.showAccount(); })
+                        .find("span").text(user.getPoints());
+                    $('#account-details').fadeIn();
+                    
+                    user.pointsUpdated.connect(function() {
+                        updatePointsBalance(loggedInUser.getPoints());
+                    });
+                }
+                else {
+                    $('#name, #points')
+                        .unbind('click')
+                        .find('span').text('');
+                    $('#account-details').fadeOut();
+                }
+            };
+            if (loggedInUser) {
+                setupLinks(loggedInUser)
+            }
+            mainController.userLoggedIn.connect(function() {
+                // temp: because signal propagation ordering is indeterminate, the 
+                // mainWindow may not have set the loggedInUser global by the
+                // time we are triggered, so ... do it via a timer.
+                //
+                // better would be to get the actual user object, which *is*
+                // sent by the signal, but in QtWebKitBridge, is not automatically
+                // transformed into a usable object, as it is in QtScript. 
+                setTimeout(function() {
+                    setupLinks(loggedInUser);
+                }, 1);
+            });
+            
+            mainController.userLoggedOut.connect(function() {
+                setupLinks(null);
+            });
+            
+            controlDeck.appStarted.connect(function() {
+                $('#disabled-veil').fadeIn();
+                $("#account-details, .tabs a").not('#library').fadeTo('slow', .3);
+            });
+            
+            controlDeck.appStopped.connect(function() {
+                $('#disabled-veil').fadeOut();
+                $("#account-details, .tabs a").not('#library').fadeTo('slow', 1);
+            });
+            
+            var onPanelChanged = function(panelName) {
+                $(".tabs a").removeClass("selected");
+                $("#" + panelName).addClass("selected");
+            };
+            
+            /*
+            var onAppFatalError = function() {
+                tabs.unbind('click').addClass('disabled');
+                $('#account-details a').unbind('click').addClass('disabled');
+            };
+            
+            // on fatal error, disable interaction
+            controlDeck.appFatalError.connect(onAppFatalError);
+            */
+            // When the panel is switched by mainWindow, update selected tabs
+            mainWindow.panelChanged.connect(onPanelChanged);
+            
+            $('body').fadeIn();
+        });
+    </script>
+</body>
+</html>

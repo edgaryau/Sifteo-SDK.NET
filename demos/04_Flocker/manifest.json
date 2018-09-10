@@ -1,0 +1,14 @@
+{"app": {
+    "title": "04. Flocker",
+    "description": "This demo app draws moving shapes that flock together by color. Different gestures influcence the flocking shapes differently: <ul><li>Neighbor: allow dots to fly between cubes.</li><li>Press: pull dots towards the center of a cube.</li><li>Tilt: push the dots in the direction of the tilt.</li><li>Shake: push the dots towards the edges of the cube.</li><li>Flip: stop movement.</li></ul>", 
+    "version": "1.0.0",
+    "runtime" : "executable",
+    "server" : "127.0.0.1:7000",
+    "arguments": ["-x", "-y"],
+    "appModule": "UNUSED",
+    "requiredSiftCount" : 2, 
+    "imagesPath": "assets/images",
+    "coverArt": "coverArt.png",
+    "internalArt": "internalArt.png"
+  }
+}

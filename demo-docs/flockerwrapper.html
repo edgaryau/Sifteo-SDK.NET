@@ -1,0 +1,368 @@
+<!DOCTYPE html />
+
+<html>
+<head>
+	<title>FlockerWrapper.cs</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="nocco.css" rel="stylesheet" media="all" type="text/css" />
+	<script src="prettify.js" type="text/javascript"></script>
+</head>
+<body onload="prettyPrint()">
+	<div id="container">
+		<div id="background"></div>
+			<div id="jump_to">
+				Jump To &hellip;
+				<div id="jump_wrapper">
+					<div id="jump_page">
+							<a class="source" href="./index.html">
+								index.cs
+							</a>
+							<a class="source" href="./hellosifteoapp.html">
+								HelloSifteoApp.cs
+							</a>
+							<a class="source" href="./slideshowapp.html">
+								SlideShowApp.cs
+							</a>
+							<a class="source" href="./sorterapp.html">
+								SorterApp.cs
+							</a>
+							<a class="source" href="./flockerapp.html">
+								FlockerApp.cs
+							</a>
+							<a class="source" href="./flockerwrapper.html">
+								FlockerWrapper.cs
+							</a>
+							<a class="source" href="./flockershape.html">
+								FlockerShape.cs
+							</a>
+					</div>
+				</div>
+			</div>
+		<table cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th class="docs">
+						<h1>FlockerWrapper.cs</h1>
+					</th>
+					<th class="code"></th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr id="section_1">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_1">&#182;</a>
+							</div>
+							<p>This class is part of the Flocker demo app. See
+<a href="flockerapp.html">FlockerApp.cs</a>.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_2">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_2">&#182;</a>
+							</div>
+							<hr />
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+using System;
+using System.Collections.Generic;
+using Sifteo;
+using Sifteo.MathExt;
+
+
+namespace Flocker {
+
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<p>The FlockerWrapper class encapsulates the simulation of a collection of
+FlockerShape class game objects for a Cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>  class FlockerWrapper {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_4">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_4">&#182;</a>
+							</div>
+							<p>These are constants that tune the behavior of the game. Try changing some values.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    internal const int NumStartingShapes = 4;
+    internal const float RadiusMinShape = 3f;
+    internal const float RadiusMaxShape = 5f;
+    internal const float RadiusMinUnscaledShape = 0.65f;
+    internal const float RadiusMaxUnscaledShape = 1.35f;
+    internal const float VelocityMax = 60f;
+    internal const float AccelSeparate = 48f;
+    internal const float AccelCohere = 24f;
+    internal const float AccelAlign = 1.4f;
+    internal const float AccelTilt = 90f;
+    internal const float AccelBounce = -1.5f;
+    internal const float AccelCenter = 360f;
+    internal const float DistanceMaxFlockAttract = 48f;
+    internal const float DistanceMaxFlockSeparate = 12f;
+
+    internal static readonly Color BackgroundColor = new Color(36, 182, 255);
+    internal static readonly Color BorderColor = new Color(255, 145, 0);
+    internal static readonly Color ShapeColor = new Color(255, 255, 255);
+
+    private List&lt;FlockerShape&gt; mShapes = new List&lt;FlockerShape&gt;();  
+
+    internal Cube mCube { get; private set; }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_5">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_5">&#182;</a>
+							</div>
+							<p>Here we initialize the wrapper by associating it with a cube and seeding it with some shapes.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    internal FlockerWrapper(Cube cube) {
+      this.mCube = cube;
+      for (int i = 0; i &lt; FlockerWrapper.NumStartingShapes; ++i) {
+        AddShape(new FlockerShape(this));
+      }
+    }
+
+    internal void OnLostCube() { mShapes.Clear(); }
+
+    internal void AddShape(FlockerShape s) {
+      s.TransferToCube(this.mCube);
+      mShapes.Add(s);
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_6">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_6">&#182;</a>
+							</div>
+							<p>Here we simulate each game object for the time that has passed.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    internal void Tick(float dt) {
+      foreach (FlockerShape s in mShapes) {
+        s.Tick(dt, mShapes);
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_7">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_7">&#182;</a>
+							</div>
+							<p>Transfer shapes from one cube to another, if they are on the border.
+See FlockerShape for details about Cube.Neighbors.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      List&lt;FlockerShape&gt; toRemove = new List&lt;FlockerShape&gt;();
+      foreach (FlockerShape s in mShapes) {
+        List&lt;Cube.Side&gt; boundarySides = CalcBoundarySides(s.Position, s.Radius);
+        foreach (Cube.Side side in boundarySides) {
+          Cube neighbor = this.mCube.Neighbors[side];
+          if (neighbor != null &amp;&amp; neighbor.userData != null) {
+            FlockerWrapper fw = (FlockerWrapper)neighbor.userData;
+            fw.AddShape(s);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_8">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_8">&#182;</a>
+							</div>
+							<p>It's usually a bad idea to remove items from a collection while
+iterating over it, so let's wait until this loop is done.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>            toRemove.Add(s);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_9">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_9">&#182;</a>
+							</div>
+							<p>We only need to remove the shape once, so break out of the inner
+loop when removing a shape.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>            break;
+          }
+        }
+      }
+      foreach (FlockerShape s in toRemove) {
+        mShapes.Remove(s);
+      }
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_10">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_10">&#182;</a>
+							</div>
+							<p>Here we paint this wrapper's shapes to the cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    internal void Paint() {
+      this.mCube.FillScreen(BackgroundColor);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_11">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_11">&#182;</a>
+							</div>
+							<p>Paint borders when a cube is neighbored to this one.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      for (Cube.Side side = Cube.Side.TOP; side &lt;= Cube.Side.RIGHT; ++side) {
+        Cube neighbor = this.mCube.Neighbors[side];
+        if (neighbor != null &amp;&amp; neighbor.userData != null) {
+          const int BorderSize = 4;
+          switch (side) {
+            case Cube.Side.TOP:
+              this.mCube.FillRect(BorderColor, 0, 0, Cube.SCREEN_WIDTH, BorderSize);
+              break;
+            case Cube.Side.LEFT:
+              this.mCube.FillRect(BorderColor, 0, 0, BorderSize, Cube.SCREEN_HEIGHT);
+              break;
+            case Cube.Side.BOTTOM:
+              this.mCube.FillRect(BorderColor, 0, Cube.SCREEN_HEIGHT - BorderSize, Cube.SCREEN_WIDTH, BorderSize);
+              break;
+            case Cube.Side.RIGHT:
+              this.mCube.FillRect(BorderColor, Cube.SCREEN_WIDTH - BorderSize, 0, BorderSize, Cube.SCREEN_HEIGHT);
+              break;
+          }
+        }
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_12">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_12">&#182;</a>
+							</div>
+							<p>Paint each shape.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      foreach (FlockerShape s in mShapes) {
+        s.Paint(this.mCube);
+      }
+
+      this.mCube.Paint();
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_13">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_13">&#182;</a>
+							</div>
+							<p>This method returns a list of the Cube.Sides that the argument circle is
+on the wrong side of, and thus is considered "out of bounds."</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    static internal List&lt;Cube.Side&gt; CalcBoundarySides(Float2 center, float radius) {
+      List&lt;Cube.Side&gt; sides = new List&lt;Cube.Side&gt;();
+      if (Mathf.Round(center.x - radius) &lt; 0f) {
+        sides.Add(Cube.Side.LEFT);
+      }
+      else if (Mathf.Round(center.x + radius) &gt; Cube.SCREEN_MAX_X) {
+        sides.Add(Cube.Side.RIGHT);
+      }
+      if (Mathf.Round(center.y - radius) &lt; 0f) {
+        sides.Add(Cube.Side.TOP);
+      }
+      else if (Mathf.Round(center.y + radius) &gt; Cube.SCREEN_MAX_Y) {
+        sides.Add(Cube.Side.BOTTOM);
+      }
+      return sides;
+    }
+  }
+}
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_14">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_14">&#182;</a>
+							</div>
+							<hr />
+
+<p>FlockerWrapper.cs</p>
+
+<p>Copyright &copy; 2011 Sifteo Inc.</p>
+
+<p>This program is "Sample Code" as defined in the Sifteo
+Software Development Kit License Agreement. By adapting
+or linking to this program, you agree to the terms of the
+License Agreement.</p>
+
+<p>If this program was distributed without the full License
+Agreement, a copy can be obtained by contacting
+support@sifteo.com.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

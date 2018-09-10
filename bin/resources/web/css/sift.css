@@ -1,0 +1,873 @@
+
+/* --- GENERAL LAYOUT ----------------------------------------------------- */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  line-height: 140%;
+  font-family: Arial, sans-serif;
+  font-weight: normal;
+  overflow: hidden;
+  -webkit-user-select:none;
+}
+
+body p,
+body h1,
+body h2,
+body h3,
+body label,
+body section {
+    -webkit-user-select:text;
+}
+
+body p button,
+body button,
+.sift-button,
+.controlsContainer,
+body .appThumb,
+body .appThumb img,
+body .button,
+body .coverArt,
+body .coverArt img {
+    -webkit-user-drag:none;
+    -webkit-user-select:none;
+}
+
+#pages {
+  background: transparent url(../images/tabs/top_shadow.png) repeat-x fixed top left;
+}
+
+#pages .pageBundle {
+  position: relative;
+}
+
+#pages .page {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  float: left;
+/*  border: 1px solid red;*/
+}
+
+#pages .page .body {
+  margin: 20px 30px;
+}
+
+/* --- TYPOGRAPHY ------------------------------------------------------ */
+
+a, a:visited {
+    color: #0090cc;
+    text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, input.title {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 120%;
+}
+
+
+h1, input.title {
+  font-size: 48px;
+  font-weight: 200;
+  margin: 0 0 10px 0;
+/*  font-size*/
+}
+
+input[name=title],
+input[name=description],
+.ck-instructions.editable, .ck-instructions.editing,
+.editor input.puzzle {
+    background:#E9E9FF;
+    border:1px solid #ddd;
+    padding:4px;
+    -webkit-box-shadow:inset 1px 1px 1px #777;
+}
+.editor input.puzzle {
+    margin-right:5px;
+    width:90px;
+}
+
+.puzzle-container {
+    margin-bottom:4px;
+}
+
+.editor .puzzles .notification {
+    font-size:10px; 
+    margin-left:10px;
+}
+.editor .puzzles .notification.warning {
+    color:#994;
+}
+.editor .puzzles .notification.error {
+    color:#f55;
+    font-weight:bold;
+}
+
+.ck-instructions.editing {
+    background:#fff;
+}
+
+input[name=title]:hover,
+input[name=description]:hover,
+.content .ck-instructions.editable:hover,
+.editor input.puzzle:hover {
+    background:#ffffbb;
+}
+
+.editor input.puzzle:focus,
+input[name=title]:focus,
+input[name=description]:focus {
+    background:#fff;
+}
+
+.content .ck-instructions.editable {
+    cursor:pointer;
+}
+
+.ck-editor .options {
+    width:400px;
+    display:block;
+    position:relative;
+}
+.ck-editor .options label {
+    display:block;
+    margin-bottom:8px;
+}
+.ck-editor .options label span {
+    position:absolute;
+    right:250px;
+    color:#666;
+    font-weight:bold;
+}
+
+.ck-editor .options input,
+.ck-editor .options select {
+    margin-left:165px;
+}
+
+.ck-editor .options select {
+    margin-top:-3px;
+}
+
+/* --- LIBRARY --------------------------------------------------------- */
+
+.library .apps {
+  margin-left: -25px;
+  width: 100%;
+  overflow: visible;
+  position:relative;
+}
+.library .apps .divider {
+    font-size:20px;
+    font-weight:bold;
+    color:#888;
+    border-bottom:2px solid #ccc;
+    margin-left:15px;
+    margin:10px 20px;
+    padding-bottom:5px;
+    clear:both;
+}
+
+.library .apps:after {
+    display:block;
+    content:"";
+    clear:both;
+}
+
+.library .appThumb {
+  position: relative;
+  float: left;
+  width: 207px;
+  height: 207px;
+  margin: 0 0 10px 10px;
+  background: transparent url(../images/block_128_shadow.png) no-repeat top left;
+}
+
+.library .appThumb img {
+  margin: 33px auto;
+  width: 128px;
+  height: 128px;
+  display: block;
+}
+
+.library .appThumb.unpackaging {
+    opacity:.5;
+}
+.library .appThumb.cloning {
+    /* clones fade in after a delay at the moment */
+    display:none;
+}
+
+.library .appThumb.unpackaging img {
+    width:43px;
+    height:11px;
+    margin-top: 90px;
+}
+.library .appThumb.unloadable img {
+    height:120px;
+    width:120px;
+    margin-top:42px;
+}
+                           
+.library a.appThumb.unpackaging,
+.library a.appThumb.unpackaging:hover,
+.library a.appThumb.unloadable,
+.library a.appThumb.unloadable:hover,
+.library a.downloading,
+.library a.downloading:hover {
+    color:#888;
+    text-decoration:none;
+    cursor:default;
+}
+
+.library a.appThumb:hover {
+    text-decoration:none;
+}
+
+.library .appThumb .title {
+  position:absolute;
+  color:#000;
+  top:75px;
+  left:40px;
+  font-size:19px;
+  padding:5px;
+  font-weight:bold;
+  width:118px;
+  overflow:hidden;
+  text-align:center;
+}
+
+.library .appThumb .title.hidden {
+    display: none;
+}
+
+.library a.appThumb.unloadable {
+    opacity:.5;
+}
+.library a.appThumb.unloadable:hover {
+    cursor:pointer;
+    opacity:.7;
+}
+
+.library .appThumb .ui-progressbar {
+  display: none;
+}
+
+.library .downloading img {
+  opacity: 0.35;
+  -moz-opacity: 0.35;
+  filter:alpha(opacity=35);
+}
+
+.library .appThumb.downloadError {
+  opacity: 0.5;
+}
+
+.library .appThumb.downloadError .ui-progressbar {
+  display: none;
+}
+
+
+.library .downloading .ui-progressbar {
+  display: block;
+  height: 13px;
+  width: 124px;
+  position: absolute;
+  left: 40px;
+  top: 145px;
+}
+
+.library .downloading.indeterminate .ui-progressbar-value {
+    background-image: url(../images/pbar-ani.gif);
+}
+.library .downloading.indeterminate .title {
+    display:block;
+    position:absolute;
+    top: -50px;
+    color:#ddd;
+    position:absolute;
+    top:154px;
+    left:40px;
+    width:130px;
+}
+
+/* --- APP ----------------------------------------------------------------- */
+
+.app.page {
+  width: ;
+}
+
+/* --- Sidebar ------------------------------------------------------------ */
+
+
+.app.page .sidebar {
+  float: left;
+  width: 240px;
+  position: absolute;
+}
+
+.app.page .sidebar .coverArt {
+  background: transparent url(../images/block_170_274.png) no-repeat top left;
+  width: 240px;
+  height: 225px;
+  position: relative;
+  padding: 43px 0 0 51px;
+  left: -20px;
+}
+
+.app.page .sidebar .coverArt img {
+  display: block;
+  width: 170px;
+  height: 170px;
+  border: none;
+}
+
+.app.page .sidebar .coverArt .title {
+    position:absolute;
+    left:50px;
+    top:100px;
+    font-size:26px;
+    font-weight:bold;
+    padding:7px;
+    width:156px;
+    overflow:hidden;
+    text-align:center;
+}
+
+.app.page .sidebar .controlsContainer {
+  width: 240px;
+  margin: 0;
+}
+
+.app.page .sidebar .controls .create {
+    padding:0;
+    margin:25px 0;
+    /*
+    padding:10px;
+    background: #f0f0f0 url(../images/top-shadow.png) top left repeat-x;
+    border:1px solid #bbb;
+    */
+    position:relative;
+}
+/*
+.app.page .sidebar .controls .create a {
+    width: 68px;
+}
+*/
+
+.app.page .sidebar .controls .create a.editButton,
+.app.page .sidebar .controls .create a.revertButton {
+/*    margin-bottom:4px;*/
+}
+
+
+.app.page .sidebar .controls .create h4 {
+    /*color:#1DA7EB;*/
+    color:#777;
+    margin: 0 0 8px;
+    border-bottom: 1px solid #999;
+}
+
+#not-enough-sifts, #more-sifts-would-be-better, #app-is-unplayable {
+    font-size:14px;
+    color:#555555;
+    padding: 5px 0 0 34px;
+    min-height: 22px;
+    background: transparent url(../images/warning.png) no-repeat left 50%;
+}
+
+#not-enough-sifts p,
+#more-sifts-would-be-better p {
+  margin: 0;
+}
+
+/* Default state - don't show any controls or status */
+
+
+.app.page .game {
+  margin-bottom: 10px;
+  text-align:center;
+}
+
+.app.page .install {
+  margin-bottom: 10px;
+}
+
+.app.page .install p.percentInstalled,
+.install-status p {
+  margin: 5px 0 0 0;
+  font-size: 12px;
+}
+
+.app.page .install-status {
+  overflow: hidden;
+  margin-bottom:10px;
+}
+
+.app.page .install-status .ui-progressbar {
+  height: 12px;
+}
+
+
+.app.page .install-status img.loading {
+  display: block;
+  float: left;
+  padding-top: 3px;
+}
+
+.app.page .install-status p {
+  margin: 0 0 0 22px;
+}
+.app.page .install-status .progress-text, .install-status .progress-bar {
+    width: 230px;
+    height: 5px;
+}
+.app.page .install-status .progress-text {
+    font-size:10px;
+}
+
+.app.page .install-status .cancel-install {
+  margin: 0;
+}
+
+.app.page .content {
+  margin-left: 265px;
+  max-width: 900px;
+  min-width: 500px;
+}
+
+.app.page .description {
+  margin-bottom: 20px;
+}
+
+.app.page .description a {
+  color: #0090cc;
+}
+
+.breadcrumb {
+  font-size: 18px;
+  padding-top: 10px;
+  margin-bottom: 4px;
+}
+
+.app.page .content .instructions {
+  width: 100%;
+}
+
+.app.page .content .instructions h1 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#ck-type-instructions-button {
+    margin-top:20px;
+}
+
+.app.page .content .editor {
+  width: 100%;
+  margin-bottom:40px;
+}
+
+.editor form section {
+    margin-bottom:15px;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* --- SPECIAL --- */
+
+.embeddedDialog {
+  padding: 40px;
+  width: 600px;
+  margin: 50px auto;
+  border: 1px solid #ccc;
+}
+
+#sifts-missing-dialog {
+/*  width: 600px;*/
+}
+
+.slideshowContainer {
+  position: relative;
+  background-color: white;
+}
+
+.slideshow {
+  border: 1px solid #ccc;
+  margin-bottom: 3px;
+  cursor: pointer;
+}
+.slideshowNav { 
+  margin-top: 10px;
+  position: absolute;
+  bottom: 10px;
+  left: 5px;
+  z-index: 100;
+}
+
+.slideshowNav a {
+  color: black; 
+  border: 1px solid #ccc; 
+  background: #F6A828;
+  text-decoration: none; 
+  margin: 0 5px 0 0; 
+  padding: 3px 5px;  
+}
+.slideshowNav a.activeSlide { 
+  background: #E78F08;
+}
+.slideshowNav a:focus { 
+  outline: none; 
+}
+
+.ui-dialog-content {
+  font-size: 14px;
+  line-height: 120%;
+}
+
+.ui-dialog-content h4 {
+  margin: 5px 0 10px 0;
+ } 
+
+.shadow {
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 10px;
+}
+
+#topbar {
+  display: none;
+  background-color: #0090cc;
+}
+
+.ui-progressbar {
+  height: 13px;
+}
+/*.ui-progressbar-value { background-image: url(../images/pbar-ani.gif); }*/
+
+
+/* --- LAYOUT ------------------------------------------------------------ */
+
+/* --- Empty message --- */
+
+.alertMessage {
+  margin: 50px auto;
+  padding: 20px;
+  display: block;
+}
+
+.alertMessage {
+  display: none;
+}
+
+.alertMessage.immediate {
+	display:block;
+}
+
+.alertMessage .content {
+  padding-left: 140px;
+  min-height: 120px;
+}
+
+.alertMessage .content.empty {
+  background: transparent url(../images/ebdus_muck_120.png) no-repeat 0 -20px;
+  min-height: 100px;
+}
+
+.alertMessage .content.offline,
+.alertMessage .content.load-error,
+.alertMessage .content.not-authorized {
+  background: transparent url(../images/zeno_thwidpicker_120.png) no-repeat 0 0;
+}
+
+
+
+
+/* --- OTHER ---- */
+
+.hidden {
+    display:none;
+}
+
+.topshadow {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 7px;
+  z-index: 1000;
+  background: transparent url(../images/tabs/top_shadow.png) repeat-x;
+}
+
+.bubble {
+    position:absolute;
+    z-index:200;
+}
+
+.bubble .bubble-content {
+    position:relative;
+    white-space:nowrap;
+    overflow:hidden;
+}
+
+.bubble .bubble-content p,
+.bubble .bubble-content h3 {
+    white-space:normal;
+}
+
+.bubble .close-box {
+    right: 9px;
+    top: 9px;
+    width:20px;
+    height:20px;
+    position:absolute;
+    cursor:pointer;
+}
+
+/* --- ALERT -------------------------------------------------------------- */ 
+
+.alertMessage {
+  margin: 50px auto;
+  width: 600px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  display: block;
+}
+
+.alertMessage {
+  display: none;
+}
+
+.alertMessage.immediate {
+	display:block;
+}
+
+.alertMessage .content {
+  padding-left: 140px;
+  min-height: 120px;
+}
+
+.alertMessage .content.empty {
+  background: transparent url(../images/ebdus_muck_120.png) no-repeat 0 -20px;
+  min-height: 100px;
+}
+
+.alertMessage .content.offline {
+  background: transparent url(../images/zeno_thwidpicker_120.png) no-repeat 0 0;
+}
+
+#page.loading {
+}
+
+#page.loading h2 {
+  margin: 200px auto;
+  background: transparent url(../images/app-loading-2.gif) no-repeat 0 26px;
+  padding-left: 65px;
+  padding-top: 15px;
+  min-height: 32px;
+  min-width: 32px;
+  width:200px;
+  font-size:40px;
+  color:#aaa;
+}
+
+/* --- BUTTONS ------------------------------------------------------------ */
+
+.add-button, .remove-button {
+    width:26px;
+    height:25px;
+    background:url(../images/add-delete-buttons.png) 0 0 no-repeat;
+    text-indent:-32000px;
+    display:inline-block;
+    margin-left:5px;
+}
+.add-button {
+    background-position:-1px -1px;
+}
+.add-button:hover {
+    background-position:-1px -28px;
+    cursor:pointer;
+}
+.add-button.disabled {
+    background-position:-1px -55px;
+    cursor:default;
+}
+.remove-button {
+    background-position:-27px -1px;
+}
+.remove-button:hover {
+    background-position:-27px -28px;
+    cursor:pointer;
+}
+.remove-button.disabled {
+    background-position:-27px -55px;
+    cursor:default;
+}
+.ui-state-default {
+  border: none;
+}
+
+a.button, a.submit, 
+.ui-state-default, 
+.ui-state-focus, 
+.ui-state-default:visited, 
+.ui-state-focus:visited,
+.ui-widget-content .ui-state-default, 
+.ui-widget-header .ui-state-default {
+  -webkit-border-radius: 1px;
+  padding: .4em .6em;
+  margin-bottom: 5px;
+  background: -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      color-stop(0, #ff6902),
+      color-stop(1, #ffa100) 
+  );
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  color: white;
+  font-weight: bold;
+  line-height: inherit;
+  cursor: pointer;
+}
+
+.ui-state-default, .ui-state-focus, .ui-state-default:visited, .ui-state-focus:visited {
+  padding: .3em .5em;
+}
+
+.ui-state-default .ui-icon {
+  background-image: url(ui-lightness/images/ui-icons_ffffff_256x240.png);
+}
+
+.ui-state-default span {
+  padding: 0;
+}
+/*
+a.button.disabled, a.button.disabled:hover, .ui-state-disabled, .ui-button-disabled {
+  background: -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      color-stop(0, #c1c1c1),
+      color-stop(1, #e7e7e7) 
+  ) !important;
+  color: #999;
+  opacity:.7;
+  cursor: default;
+}
+*/
+.sift-button {
+    display:inline-block;
+    text-decoration:none;
+    background:url(../images/button-50-r.png) no-repeat right top;
+    background-position: 100% -58px;
+    /*clear:left;*/
+    height:58px;
+    color:#fff;
+    cursor:pointer;
+    font-weight:bold;
+    padding: 0 10px 0 0;
+    text-align:center;
+    font-size:20px;
+    -webkit-user-drag:none;
+    -webkit-user-select:none;
+    position:relative;
+    text-decoration:none;
+}
+a.sift-button:visited {
+    color:#fff;
+}
+.sift-button.blue, .sift-button.small.blue {
+    background-position: 100% 0px;
+}
+
+.sift-button.small {
+    background:url(../images/button-32-r.png) no-repeat right top;
+    background-position: 100% -40px;
+    height:40px;
+    font-size:16px;
+    overflow:hidden;
+}
+
+.sift-button span.sift-button-inner {
+    display:inline-block;
+    padding: 0 10px 0 20px; /* 20 pix on left to make up for 10 px extra padding on right due to parent */
+    position:relative;
+    height: 58px;
+    line-height:50px;
+    background: url(../images/button-50-l.png) no-repeat left top;
+    background-position: 0% -58px;
+    -webkit-user-drag:none;
+    -webkit-user-select:none;
+    text-decoration:none;
+}
+.sift-button.blue span.sift-button-inner {
+    background-position: 0% 0px;
+}
+.sift-button.small span.sift-button-inner {
+    background: url(../images/button-32-l.png) no-repeat left top;
+    background-position: 0% -40px;
+    line-height:32px;
+}
+.sift-button.small.blue span.sift-button-inner {
+    background-position: 0% 0px;
+}
+.sift-button.disabled, .sift-button.disabled:hover {
+    background-position: 100% -174px;
+    cursor:default;
+}
+.sift-button.small.disabled, .sift-button.small.disabled:hover {
+    background-position: 100% -120px;
+    cursor:default;
+}
+.sift-button.small.disabled span.sift-button-inner, .sift-button.small.disabled:hover span.sift-button-inner {
+    background-position: 0% -120px;
+    cursor:default;
+}
+.sift-button.disabled span.sift-button-inner, .sift-button.disabled:hover span.sift-button-inner {
+   background-position: 0% -174px;
+   cursor:default;
+}
+
+.sift-button span.ui-icon {
+    display:inline-block;
+    position:absolute;
+    margin:16px 10px;
+    z-index:20;
+}
+.sift-button.small span.ui-icon {
+    margin:8px;
+}
+
+span.ui-icon + span.sift-button-inner {
+    padding-left:30px;
+}
+
+.sift-button:hover {
+    background-position: 100% -116px;
+}
+
+.sift-button:hover span.sift-button-inner {
+    background-position: 0% -116px;
+}
+
+.sift-button.small:hover {
+    background-position: 100% -80px;
+}
+.sift-button.small:hover span.sift-button-inner {
+    background-position: 0% -80px;
+}
+
+.sift-button .ui-icon { background-image: url(ui-lightness/images/ui-icons_ffffff_256x240.png); }

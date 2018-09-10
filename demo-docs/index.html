@@ -1,0 +1,189 @@
+<!DOCTYPE html />
+
+<html>
+<head>
+	<title>index.cs</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="nocco.css" rel="stylesheet" media="all" type="text/css" />
+	<script src="prettify.js" type="text/javascript"></script>
+</head>
+<body onload="prettyPrint()">
+	<div id="container">
+		<div id="background"></div>
+			<div id="jump_to">
+				Jump To &hellip;
+				<div id="jump_wrapper">
+					<div id="jump_page">
+							<a class="source" href="./index.html">
+								index.cs
+							</a>
+							<a class="source" href="./hellosifteoapp.html">
+								HelloSifteoApp.cs
+							</a>
+							<a class="source" href="./slideshowapp.html">
+								SlideShowApp.cs
+							</a>
+							<a class="source" href="./sorterapp.html">
+								SorterApp.cs
+							</a>
+							<a class="source" href="./flockerapp.html">
+								FlockerApp.cs
+							</a>
+							<a class="source" href="./flockerwrapper.html">
+								FlockerWrapper.cs
+							</a>
+							<a class="source" href="./flockershape.html">
+								FlockerShape.cs
+							</a>
+					</div>
+				</div>
+			</div>
+		<table cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th class="docs">
+						<h1>index.cs</h1>
+					</th>
+					<th class="code"></th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr id="section_1">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_1">&#182;</a>
+							</div>
+							
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_2">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_2">&#182;</a>
+							</div>
+							<h1>Sifteo API Demos</h1>
+
+<p>These sample programs are provided to illustrate various parts of the Sifteo
+API.  Sifteo's goal is to provide a framework that is robust enough for the
+most complex projects, but simple enough for rapid prototyping and
+sketching.</p>
+
+<h2><a href="hellosifteoapp.html">01. Hello Sifteo</a></h2>
+
+<p>This demo illustrates the basic structure of a Sifteo app, and demonstrates
+some of the basic drawing functions.</p>
+
+<p>The following interfaces and concepts are demonstrated in "Hello Sifteo:"</p>
+
+<ul>
+<li>BaseApp</li>
+<li>BaseApp.Setup and BaseApp.Tick</li>
+<li>Cube and CubeSet</li>
+<li>Color</li>
+<li>Cube.FillScreen and Cube.FillRect</li>
+<li>Cube.Paint</li>
+</ul>
+
+<h2><a href="slideshowapp.html">02. Slide Show</a></h2>
+
+<p>This demo illustrates the event model for Sifteo apps, the gestures you can
+listen for, and how to draw an image to a cube's screen.</p>
+
+<p>The following interfaces and concepts are demonstrated in "Slide Show:"</p>
+
+<ul>
+<li>Cube.Image</li>
+<li>Cube gesture events:
+<ul>
+<li>NeighborAddEvent</li>
+<li>NeighborRemoveEvent</li>
+<li>ButtonEvent</li>
+<li>TiltEvent</li>
+<li>ShakeStartedEvent</li>
+<li>ShakeStoppedEvent</li>
+<li>FlipEvent</li>
+</ul></li>
+<li>Wrapper pattern</li>
+</ul>
+
+<p>This app can also serve as a utility for quickly testing graphics on a cube.</p>
+
+<h2><a href="sorterapp.html">03. Sorter</a></h2>
+
+<p>This demo illustrates the basics of making an app robust with pause/unpause
+and new/lost cube handlers; simple audio; and utility functions for dealing
+with networks of neighbored cubes.</p>
+
+<p>The following interfaces and concepts are demonstrated in "Sorter:"</p>
+
+<ul>
+<li>BaseApp and CubeSet events:
+<ul>
+<li>PauseEvent</li>
+<li>UnpauseEvent</li>
+<li>NewCubeEvent</li>
+<li>LostCubeEvent</li>
+</ul></li>
+<li>Sounds.CreateSound, Sound.Play, Sound.Stop</li>
+<li>CubeHelper.FindRow, CubeHelper.FindColumn, and CubeHelper.FindConnected</li>
+<li>More on Image rotation</li>
+</ul>
+
+<h2><a href="flockerapp.html">04. Flocker</a></h2>
+
+<p>This demo illustrates objects in motion on the cubes. It also demonstrates
+ways to check sensor state (neighbors, tilt, button) without using event
+handlers.</p>
+
+<p>The following interfaces and concepts are demonstrated in "Flocker:"</p>
+
+<ul>
+<li>BaseApp.DeltaTime and BaseApp.FrameRate</li>
+<li>Checking sensors by state rather than event:
+<ul>
+<li>Cube.Neighbors</li>
+<li>Cube.ButtonIsPressed</li>
+<li>Cube.Tilt</li>
+<li>Cube.IsUpright</li>
+<li>Cube.IsShaking</li>
+</ul></li>
+</ul>
+
+<p>Source code for Flocker is split into multiple files for easier reading:</p>
+
+<ul>
+<li><a href="flockerapp.html">FlockerApp.cs</a> contains the BaseApp.</li>
+<li><a href="flockerwrapper.html">FlockerWrapper.cs</a> contains the cube wrapper.</li>
+<li><a href="flockershape.html">FlockerShape.cs</a> contains the shapes that fly around.</li>
+</ul>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<hr />
+
+<p>This file contains no code; it's just a placeholder for documentation purposes.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

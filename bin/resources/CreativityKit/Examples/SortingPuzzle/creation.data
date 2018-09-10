@@ -1,0 +1,19 @@
+{
+    "title": "Sorting Puzzle",
+    "description": "Create a row to solve each puzzle",
+    "instructions": "Arrange the words displayed on each cube to construct a phrase",
+    "scored": true,
+    "time": 0,
+    "shuffle": false,
+    "puzzles": [
+        ["I","am","Ethan"],
+        ["Rain", "in", "Spain"],
+        ["Ericson", "Columbus", "Magellan"],
+        ["c'est", "la", "vie"],
+        ["1", "2", "3"],
+        ["-10", "pi", "2^2"],
+        ["Friday", "Saturday", "Sunday"],
+        ["2011", "2012", "2013"],
+        ["Kids", "are", "smart!"]
+    ]
+}

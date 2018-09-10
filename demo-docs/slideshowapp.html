@@ -1,0 +1,912 @@
+<!DOCTYPE html />
+
+<html>
+<head>
+	<title>SlideShowApp.cs</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link href="nocco.css" rel="stylesheet" media="all" type="text/css" />
+	<script src="prettify.js" type="text/javascript"></script>
+</head>
+<body onload="prettyPrint()">
+	<div id="container">
+		<div id="background"></div>
+			<div id="jump_to">
+				Jump To &hellip;
+				<div id="jump_wrapper">
+					<div id="jump_page">
+							<a class="source" href="./index.html">
+								index.cs
+							</a>
+							<a class="source" href="./hellosifteoapp.html">
+								HelloSifteoApp.cs
+							</a>
+							<a class="source" href="./slideshowapp.html">
+								SlideShowApp.cs
+							</a>
+							<a class="source" href="./sorterapp.html">
+								SorterApp.cs
+							</a>
+							<a class="source" href="./flockerapp.html">
+								FlockerApp.cs
+							</a>
+							<a class="source" href="./flockerwrapper.html">
+								FlockerWrapper.cs
+							</a>
+							<a class="source" href="./flockershape.html">
+								FlockerShape.cs
+							</a>
+					</div>
+				</div>
+			</div>
+		<table cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th class="docs">
+						<h1>SlideShowApp.cs</h1>
+					</th>
+					<th class="code"></th>
+				</tr>
+			</thead>
+			<tbody>
+					<tr id="section_1">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_1">&#182;</a>
+							</div>
+							
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_2">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_2">&#182;</a>
+							</div>
+							<p>This demo app displays a series of images on your Sifteo cubes. Different
+gestures trigger different actions on the images:</p>
+
+<ul>
+<li>Press: Switch to the next image</li>
+<li>Neighbor: rotate the image</li>
+<li>Tilt: offset the image</li>
+<li>Shake: rotate the image randomly</li>
+<li>Flip: scale the image</li>
+</ul>
+
+<p>This program demonstrates the following concepts:</p>
+
+<ul>
+<li>Event handling basics</li>
+<li>Cube sensor events</li>
+<li>Image drawing basics</li>
+</ul>
+
+<p>In addition to illustrating APIs and programming concepts, this demo can be
+a useful utility for quickly testing graphics. Just drop your images into
+this project's <code>assets/images</code> directory, bundle your assets in the
+ImageHelper tool, and reload the game to check them out.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_3">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_3">&#182;</a>
+							</div>
+							<hr />
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Sifteo;
+
+namespace SlideShow {
+
+  public class SlideShowApp : BaseApp {
+
+    public String[] mImageNames;
+    public List&lt;CubeWrapper&gt; mWrappers = new List&lt;CubeWrapper&gt;();
+    public Random mRandom = new Random();
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_4">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_4">&#182;</a>
+							</div>
+							<p>Here we initialize our app.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    public override void Setup() {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_5">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_5">&#182;</a>
+							</div>
+							<p>Load up the list of images.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mImageNames = LoadImageIndex();
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_6">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_6">&#182;</a>
+							</div>
+							<p>Loop through all the cubes and set them up.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      foreach (Cube cube in CubeSet) {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_7">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_7">&#182;</a>
+							</div>
+							<p>Create a wrapper object for each cube. The wrapper object allows us
+to bundle a cube with extra information and behavior.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        CubeWrapper wrapper = new CubeWrapper(this, cube);
+        mWrappers.Add(wrapper);
+        wrapper.DrawSlide();
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_8">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_8">&#182;</a>
+							</div>
+							<h2>Event Handlers</h2>
+
+<p>Objects in the Sifteo API (particularly BaseApp, CubeSet, and Cube)
+fire events to notify an app of various happenings, including actions
+that the player performs on the cubes.</p>
+
+<p>To listen for an event, just add the handler method to the event. The
+handler method must have the correct signature to be added. Refer to
+the API documentation or look at the examples below to get a sense of
+the correct signatures for various events.</p>
+
+<p><strong>NeighborAddEvent</strong> and <strong>NeighborRemoveEvent</strong> are triggered when
+the player puts two cubes together or separates two neighbored cubes.
+These events are fired by CubeSet instead of Cube because they involve
+interaction between two Cube objects. (There are Cube-level neighbor
+events as well, which comes in handy in certain situations, but most
+of the time you will find the CubeSet-level events to be more useful.)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      CubeSet.NeighborAddEvent += OnNeighborAdd;
+      CubeSet.NeighborRemoveEvent += OnNeighborRemove;
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_9">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_9">&#182;</a>
+							</div>
+							<h2>Neighbor Add</h2>
+
+<p>This method is a handler for the NeighborAdd event. It is triggered when
+two cubes are placed side by side.</p>
+
+<p>Cube1 and cube2 are the two cubes that are involved in this neighboring.
+The two cube arguments can be in any order; if your logic depends on
+cubes being in specific positions or roles, you need to add logic to
+this handler to sort the two cubes out.</p>
+
+<p>Side1 and side2 are the sides that the cubes neighbored on.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private void OnNeighborAdd(Cube cube1, Cube.Side side1, Cube cube2, Cube.Side side2)  {
+      Log.Debug(&quot;Neighbor add: {0}.{1} &lt;-&gt; {2}.{3}&quot;, cube1.UniqueId, side1, cube2.UniqueId, side2);
+
+      CubeWrapper wrapper = (CubeWrapper)cube1.userData;
+      if (wrapper != null) {
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_10">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_10">&#182;</a>
+							</div>
+							<p>Here we set our wrapper's rotation value so that the image gets
+drawn with its top side pointing towards the neighbor cube.</p>
+
+<p>Cube.Side is an enumeration (TOP, LEFT, BOTTOM, RIGHT, NONE). The
+values of the enumeration can be cast to integers by counting
+counterclockwise:</p>
+
+<ul>
+<li>TOP = 0</li>
+<li>LEFT = 1</li>
+<li>BOTTOM = 2</li>
+<li>RIGHT = 3</li>
+<li>NONE = 4</li>
+</ul>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        wrapper.mRotation = (int)side1;
+        wrapper.mNeedDraw = true;
+      }
+
+      wrapper = (CubeWrapper)cube2.userData;
+      if (wrapper != null) {
+        wrapper.mRotation = (int)side2;
+        wrapper.mNeedDraw = true;
+      }
+
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_11">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_11">&#182;</a>
+							</div>
+							<h2>Neighbor Remove</h2>
+
+<p>This method is a handler for the NeighborRemove event. It is triggered
+when two cubes that were neighbored are separated.</p>
+
+<p>The side arguments for this event are the sides that the cubes
+<em>were</em> neighbored on before they were separated. If you check the
+current state of their neighbors on those sides, they should of course
+be NONE.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private void OnNeighborRemove(Cube cube1, Cube.Side side1, Cube cube2, Cube.Side side2)  {
+      Log.Debug(&quot;Neighbor remove: {0}.{1} &lt;-&gt; {2}.{3}&quot;, cube1.UniqueId, side1, cube2.UniqueId, side2);
+
+      CubeWrapper wrapper = (CubeWrapper)cube1.userData;
+      if (wrapper != null) {
+        wrapper.mScale = 1;
+        wrapper.mRotation = 0;
+        wrapper.mNeedDraw = true;
+      }
+
+      wrapper = (CubeWrapper)cube2.userData;
+      if (wrapper != null) {
+        wrapper.mScale = 1;
+        wrapper.mRotation = 0;
+        wrapper.mNeedDraw = true;
+      }
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_12">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_12">&#182;</a>
+							</div>
+							<p>Defer all per-frame logic to each cube's wrapper.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    public override void Tick() {
+      foreach (CubeWrapper wrapper in mWrappers) {
+        wrapper.Tick();
+      }
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_13">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_13">&#182;</a>
+							</div>
+							<p>ImageSet is an enumeration of your app's images. It is populated based
+on your app's siftbundle and index. You rarely have to interact with it
+directly, since you can refer to images by name.</p>
+
+<p>In this method, we scan the image set to build an array with the names
+of all the images.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private String[] LoadImageIndex() {
+      ImageSet imageSet = this.Images;
+      ArrayList nameList = new ArrayList();
+      foreach (ImageInfo image in imageSet) {
+        nameList.Add(image.name);
+      }
+      String[] rv = new String[nameList.Count];
+      for (int i=0; i&lt;nameList.Count; i++) {
+        rv[i] = (string)nameList[i];
+      }
+      return rv;
+    }
+
+  }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_14">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_14">&#182;</a>
+							</div>
+							<hr />
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_15">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_15">&#182;</a>
+							</div>
+							<h2>Wrapper</h2>
+
+<p>"Wrapper" is not a specific API, but a pattern that is used in many Sifteo
+apps. A wrapper is an object that bundles a Cube object with game-specific
+data and behaviors.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>  public class CubeWrapper {
+
+    public SlideShowApp mApp;
+    public Cube mCube;
+    public int mIndex;
+    public int mXOffset = 0;
+    public int mYOffset = 0;
+    public int mScale = 1;
+    public int mRotation = 0;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_16">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_16">&#182;</a>
+							</div>
+							<p>This flag tells the wrapper to redraw the current image on the cube. (See Tick, below).</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    public bool mNeedDraw = false;
+
+    public CubeWrapper(SlideShowApp app, Cube cube) {
+      mApp = app;
+      mCube = cube;
+      mCube.userData = this;
+      mIndex = 0;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_17">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_17">&#182;</a>
+							</div>
+							<p>Here we attach more event handlers for button and accelerometer actions.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mCube.ButtonEvent += OnButton;
+      mCube.TiltEvent += OnTilt;
+      mCube.ShakeStartedEvent += OnShakeStarted;
+      mCube.ShakeStoppedEvent += OnShakeStopped;
+      mCube.FlipEvent += OnFlip;
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_18">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_18">&#182;</a>
+							</div>
+							<h2>Button</h2>
+
+<p>This is a handler for the Button event. It is triggered when a cube's
+face button is either pressed or released. The <code>pressed</code> argument
+is true when you press down and false when you release.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private void OnButton(Cube cube, bool pressed) {
+      if (pressed) {
+        Log.Debug(&quot;Button pressed&quot;);
+      } else {
+        Log.Debug(&quot;Button released&quot;);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_19">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_19">&#182;</a>
+							</div>
+							<p>Advance the image index so that the next image is drawn on this
+cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>        this.mIndex += 1;
+        if (mIndex &gt;= mApp.mImageNames.Length) {
+          mIndex = 0;
+        }
+        mRotation = 0;
+        mScale = 1;
+        mNeedDraw = true;
+
+      }
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_20">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_20">&#182;</a>
+							</div>
+							<h2>Tilt</h2>
+
+<p>This is a handler for the Tilt event. It is triggered when a cube is
+tilted past a certain threshold. The x, y, and z arguments are filtered
+values for the cube's three-axis acceleromter. A tilt event is only
+triggered when the filtered value changes, i.e., when the accelerometer
+crosses certain thresholds.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private void OnTilt(Cube cube, int tiltX, int tiltY, int tiltZ) {
+      Log.Debug(&quot;Tilt: {0} {1} {2}&quot;, tiltX, tiltY, tiltZ);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_21">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_21">&#182;</a>
+							</div>
+							<p>If the X axis tilt reads 0, the cube is tilting to the left. <br/>
+If it reads 1, the cube is centered. <br/>
+If it reads 2, the cube is tilting to the right.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (tiltX == 0) {
+        mXOffset = -8;
+      } else if (tiltX == 1) {
+        mXOffset = 0;
+      } else if (tiltX == 2) {
+        mXOffset = 8;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_22">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_22">&#182;</a>
+							</div>
+							<p>If the Y axis tilt reads 0, the cube is tilting down. <br/>
+If it reads 1, the cube is centered. <br/>
+If it reads 2, the cube is tilting up.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (tiltY == 0) {
+        mYOffset = 8;
+      } else if (tiltY == 1) {
+        mYOffset = 0;
+      } else if (tiltY == 2) {
+        mYOffset = -8;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_23">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_23">&#182;</a>
+							</div>
+							<p>If the Z axis tilt reads 2, the cube is face up. <br/>
+If it reads 1, the cube is standing on a side. <br/>
+If it reads 0, the cube is face down.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (tiltZ == 1) {
+        mXOffset *= 2;
+        mYOffset *= 2;
+      }
+
+      mNeedDraw = true;
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_24">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_24">&#182;</a>
+							</div>
+							<h2>Shake Started</h2>
+
+<p>This is a handler for the ShakeStarted event. It is triggered when the
+player starts shaking a cube. When the player stops shaking, a
+corresponding ShakeStopped event will be fired (see below).</p>
+
+<p>Note: while a cube is shaking, it will still fire tilt and flip events
+as its internal accelerometer goes around and around. If your game wants
+to treat shaking separately from tilting or flipping, you need to add
+logic to filter events appropriately.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private void OnShakeStarted(Cube cube) {
+      Log.Debug(&quot;Shake start&quot;);
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_25">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_25">&#182;</a>
+							</div>
+							<h2>Shake Stopped</h2>
+
+<p>This is a handler for the ShakeStarted event. It is triggered when the
+player stops shaking a cube. The <code>duration</code> argument tells you
+how long (in milliseconds) the cube was shaken.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private void OnShakeStopped(Cube cube, int duration) {
+      Log.Debug(&quot;Shake stop: {0}&quot;, duration);
+      mRotation = 0;
+      mNeedDraw = true;
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_26">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_26">&#182;</a>
+							</div>
+							<h2>Flip</h2>
+
+<p>This is a handler for the Flip event. It is triggered when the player
+turns a cube face down or face up. The <code>newOrientationIsUp</code> argument
+tells you which way the cube is now facing.</p>
+
+<p>Note that when a Flip event is triggered, a Tilt event is also
+triggered.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    private void OnFlip(Cube cube, bool newOrientationIsUp) {
+      if (newOrientationIsUp) {
+        Log.Debug(&quot;Flip face up&quot;);
+        mScale = 1;
+        mNeedDraw = true;
+      } else {
+        Log.Debug(&quot;Flip face down&quot;);
+        mScale = 2;
+        mNeedDraw = true;
+      }
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_27">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_27">&#182;</a>
+							</div>
+							<h2>Cube.Image</h2>
+
+<p>This method draws the current image to the cube's display. The
+Cube.Image method has a lot of arguments, but many of them are optional
+and have reasonable default values.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    public void DrawSlide() {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_28">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_28">&#182;</a>
+							</div>
+							<p>Here we specify the name of the image to draw, in this case by pulling
+it from the array of names we read out of the image set (see
+LoadImageIndex, above).</p>
+
+<p>When specifying the image name, leave off any file type extensions
+(png, gif, etc). Refer to the index file that ImageHelper generates
+during asset conversion.</p>
+
+<p>If you specify an image name that is not in the index, the Image call
+will be ignored.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      String imageName = this.mApp.mImageNames[this.mIndex];
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_29">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_29">&#182;</a>
+							</div>
+							<p>You can specify the top/left point on the screen to start drawing at.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      int screenX = mXOffset;
+      int screenY = mYOffset;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_30">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_30">&#182;</a>
+							</div>
+							<p>You can draw a portion of an image by specifying coordinates to start
+reading from (top/left). In this case, we're just going to draw the
+whole image every time.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      int imageX = 0;
+      int imageY = 0;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_31">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_31">&#182;</a>
+							</div>
+							<p>You should always specify the width and height of the image to be
+drawn. If you specify values that are less than the size of the image,
+only the portion you specify will be drawn. If you specify values
+larger than the image, the behavior is undefined (so don't do that).</p>
+
+<p>In this example, we assume that the image is 128x128, big enough to
+cover the full size of the display. If the image runs off the sides of
+the display (because of offsets due to tilting; see OnTilt, above), it
+will be clipped.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      int width = 128;
+      int height = 128;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_32">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_32">&#182;</a>
+							</div>
+							<p>You can upscale an image by integer multiples. A scaled image still
+starts drawing at the specified top/left point, but the area of the
+display it covers (width/height) will be multipled by the scale.</p>
+
+<p>The default value is 1 (1:1 scale).</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      int scale = mScale;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_33">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_33">&#182;</a>
+							</div>
+							<p>You can rotate an image by quarters. The rotation value is an integer
+representing counterclockwise rotation.</p>
+
+<ul>
+<li>0 = no rotation</li>
+<li>1 = 90 degrees counterclockwise</li>
+<li>2 = 180 degrees</li>
+<li>3 = 90 degrees clockwise</li>
+</ul>
+
+<p>A rotated image still starts drawing at the specified top/left point;
+the pixels are just drawn in rotated order.</p>
+
+<p>The default value is 0 (no rotation).</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      int rotation = mRotation;
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_34">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_34">&#182;</a>
+							</div>
+							<p>Clear off whatever was previously on the display before drawing the new image.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mCube.FillScreen(Color.Black);
+
+      mCube.Image(imageName, screenX, screenY, imageX, imageY, width, height, scale, rotation);
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_35">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_35">&#182;</a>
+							</div>
+							<p>Remember: always call Paint if you actually want to see anything on the cube's display.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      mCube.Paint();
+    }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_36">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_36">&#182;</a>
+							</div>
+							<p>This method is called every frame by the Tick in SlideShowApp (see above.)</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>    public void Tick() {
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_37">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_37">&#182;</a>
+							</div>
+							<p>You can check whether a cube is being shaken at this moment by looking
+at the IsShaking flag.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (mCube.IsShaking) {
+        mRotation = mApp.mRandom.Next(4);
+        mNeedDraw = true;
+      }
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_38">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_38">&#182;</a>
+							</div>
+							<p>If anyone has raised the mNeedDraw flag, redraw the image on the cube.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>      if (mNeedDraw) {
+        mNeedDraw = false;
+        DrawSlide();
+      }
+    }
+
+  }
+}
+
+</code></pre>
+						</td>
+					</tr>
+					<tr id="section_39">
+						<td class="docs">
+							<div class="pilwrap">
+								<a class="pilcrow" href="#section_39">&#182;</a>
+							</div>
+							<hr />
+
+<p>SlideShowApp.cs</p>
+
+<p>Copyright &copy; 2011 Sifteo Inc.</p>
+
+<p>This program is "Sample Code" as defined in the Sifteo
+Software Development Kit License Agreement. By adapting
+or linking to this program, you agree to the terms of the
+License Agreement.</p>
+
+<p>If this program was distributed without the full License
+Agreement, a copy can be obtained by contacting
+support@sifteo.com.</p>
+
+						</td>
+						<td class="code">
+							<pre><code class='prettyprint'>
+</code></pre>
+						</td>
+					</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/audio">
+        <file>pairing/smb_1-up.wav</file>
+        <file>pairing/smw_coin.wav</file>
+        <file>pairing/smw_mushroom.wav</file>
+        <file>pairing/smw_stun.wav</file>
+    </qresource>
+</RCC>
